@@ -1,6 +1,8 @@
 import json
 import re
 from bs4 import BeautifulSoup
+import krovetz
+
 
 
 #things we need:
@@ -55,8 +57,14 @@ def extract_important(json_data):
 
 
 def tokenizer(s):
-    token = set(re.sub('[^a-z0-9]', ' ', s.lower()).split())
-    return token
+    token = re.sub('[^a-z0-9]', ' ', s.lower()).split()
+    ks = krovetz.PyKrovetzStemmer()
+    frequency = dict()
+    for t in token:
+        stemmed = ks.stem(t)
+        count = frequency.get(stemmed, 0)
+        frequency[stemmed] = count + 1
+    return frequency #returns dictionary of terms: count
 
 path = "C:/Users/raynh/Desktop/assignment3/analyst/www_informatics_uci_edu/0a3175bebaa8bab4bc69961115bf3cebf8c6337ae6a62394c8e5e2d5509ddcee.json"
 
