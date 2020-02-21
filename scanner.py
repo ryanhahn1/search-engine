@@ -6,6 +6,21 @@ def scan_documents():
     pagecount = 0
     longest = ['', 0]
 
+
+def buildIndex():
+	indexes = dict()
+	n = 0
+	for doc in Documents:
+		n += 1
+		# Tokens = set(tokenize(doc)) Tokens is set of tokens
+		for token in Tokens:
+			if indexes.get(token, None) == None:
+				indexes[token] = []
+			# p = posting(n, frequency, bool)
+			indexes[token].append(p)
+	return indexes
+
+	
 def get_files(main_dir):
 	for file in os.listdir(main_dir):
 		path = os.path.join(main_dir, file)
