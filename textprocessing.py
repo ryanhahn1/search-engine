@@ -58,7 +58,7 @@ def extract_important(json_data):
 def word_count(s) -> int:
     return len(re.sub('[^a-z0-9]', ' ', s.lower()).split())
     
-def tokenizer(s) - > dict:
+def tokenizer(s) -> dict:
     token = re.sub('[^a-z0-9]', ' ', s.lower()).split()
     ks = krovetz.PyKrovetzStemmer()
     frequency = dict()
@@ -68,12 +68,3 @@ def tokenizer(s) - > dict:
         frequency[stemmed] = count + 1
     return frequency #returns dictionary of terms: count
 
-path = "C:/Users/raynh/Desktop/assignment3/analyst/www_informatics_uci_edu/0a3175bebaa8bab4bc69961115bf3cebf8c6337ae6a62394c8e5e2d5509ddcee.json"
-
-with open(path) as json_file:
-    data = json.load(json_file)
-    #print(data["encoding"])
-    output = extract_text(data)
-    tokens = tokenizer(output)
-    #print(tokens)
-    print(extract_important(data))
