@@ -55,7 +55,7 @@ def extract_important(json_data):
     except Exception as e:
         print(e)
 
-def wordCount(s) -> int:
+def word_count(s) -> int:
     return len(re.sub('[^a-z0-9]', ' ', s.lower()).split())
     
 def tokenizer(s) - > dict:
