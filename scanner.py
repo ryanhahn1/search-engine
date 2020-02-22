@@ -1,4 +1,9 @@
+from bs4 import BeautifulSoup
+from textprocessing import tokenizer, extract_text, extract_important 
+
 import os
+import json
+import 
 
 def scan_documents():
     simhashes = set() #simhash object
@@ -7,29 +12,41 @@ def scan_documents():
     longest = ['', 0]
 
 
-def buildIndex():
+def build_index(Documents):
 	indexes = dict()
 	n = 0
+	batch = 100
 	for doc in Documents:
 		n += 1
-		# Tokens = set(tokenize(doc)) Tokens is set of tokens
-		for token in Tokens:
+
+		with open(doc) as json_file:
+			data = json.load(json_file)
+
+			tokens = tokenizer(extract_text(data))
+			important = tokenizer(extract_important(data))
+
+		for token, frequency in tokens.items():
 			if indexes.get(token, None) == None:
 				indexes[token] = []
-			# p = posting(n, frequency, bool)
+			p = Posting(n, frequency, token in important)
 			indexes[token].append(p)
+
 	return indexes
 
 	
-def get_files(main_dir):
+def get_files(main_dir) -> list:
+	documents = []
 	for file in os.listdir(main_dir):
 		path = os.path.join(main_dir, file)
 		if os.path.isdir(path):
 			get_files(path)
 		elif os.path.isfile(path):
-			print(file)
+			documents.append(path)
+	return documents
 
+	
 
 if __name__ == '__main__':
 	file_location = "ANALYST"
-	get_files(os.path.join(os.path.dirname(os.getcwd()), file_location))
+	build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+
