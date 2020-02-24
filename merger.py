@@ -1,4 +1,5 @@
 import json
+import shutil as shu
 
 def merge(file_1, file_2):
 	with open(file_1, encoding='utf-8', errors='replace') as file1:
@@ -45,6 +46,15 @@ def merge(file_1, file_2):
 					output += line1
 					line1 = next(iter1, None)
 			print(output)
+			# need to delete contents of file 1 and put in output
+
+def multimerge(file_list):
+	with open("main.txt", "w") as main:
+		with open(file_list[0]) as first:
+			shu.copyfileobj(first, main)
+	current = 1
+	while (current > len(file_list)):
+		merge(main.txt, file_list[current])
 			
 
 path1 = "0.txt"
