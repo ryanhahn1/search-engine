@@ -26,9 +26,10 @@ def create_posting(docid, frequency, important, wordcount):
     post["importance"] = important
     return post
 
-# post = posting, total_docs = number of documents found total, total_with_term = length of postings list for that word
+# total_with_term = length of postings list for that word
 def set_idf(self, post, total_docs, total_with_term):
     post["idf"] = log( (total_docs / total_with_term) )
 
+# calculates and returns the tf-idf
 def get_tfidf(self, post):
-    return ( (term_freq / word_count) / post["idf"] )
+    return ( (post["term_freq"] / post["word_count"]) / post["idf"] )
