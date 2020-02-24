@@ -18,7 +18,7 @@ import math
 #         return ( (term_freq / word_count) / self.idf )
 
 def create_posting(id, frequency, important, wordcount):
-    post = dict():
+    post = dict()
     post["word_count"] = wordcount
     post["term_freq"] = frequency
     post["idf"] = 0

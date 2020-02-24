@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from textprocessing import tokenizer, extract_text, extract_important, word_count
-from posting import Posting
+from posting import create_posting
 
 import os
 import json
@@ -16,12 +16,10 @@ def scan_documents():
 def build_index(Documents):
 	indexes = dict()
 	n = 0
-	batch = 100
 	for doc in Documents:
 		n += 1
 		with open(doc, encoding='utf-8', errors='replace') as json_file:
 			if ".DS_Store" not in doc:
-				print(doc)
 				data = json.load(json_file)
 
 				text = extract_text(data)
@@ -32,10 +30,13 @@ def build_index(Documents):
 				for token, frequency in tokens.items():
 					if indexes.get(token, None) == None:
 						indexes[token] = []
-					p = Posting(n, frequency, token in important, word_count(text))
+					p = create_posting(n, frequency, token in important, word_count(text))
 					indexes[token].append(p)
 
-	return indexes
+	with open("test.json", 'w') as data_file:
+		json.dump(indexes, data_file, sort_keys=True, indent=4, separators=(',', ': '))	
+
+	#return indexes
 
 def get_in_dir(dirname):
 	documents = []
@@ -49,6 +50,7 @@ def get_in_dir(dirname):
 	
 def get_files(main_dir) -> list:
 	all_documents = []
+	count = 0
 	for file in os.listdir(main_dir):
 		path = os.path.join(main_dir, file)
 		if os.path.isdir(path):
@@ -60,6 +62,7 @@ def get_files(main_dir) -> list:
 	
 
 if __name__ == '__main__':
-	file_location = "ANALYST"
+	file_location = "ANALYST/www-db_ics_uci_edu"
 	build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+	
 
