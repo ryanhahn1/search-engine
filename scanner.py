@@ -4,6 +4,7 @@ from posting import create_posting
 
 import os
 import json
+import re
 
 
 def scan_documents():
@@ -15,8 +16,13 @@ def scan_documents():
 
 def build_index(Documents):
 	indexes = dict()
+	total_docs = len(Documents)
+	batch_num = 0
 	n = 0
+	batch = 0
+
 	for doc in Documents:
+		batch += 1
 		n += 1
 		with open(doc, encoding='utf-8', errors='replace') as json_file:
 			if ".DS_Store" not in doc:
@@ -32,10 +38,21 @@ def build_index(Documents):
 						indexes[token] = []
 					p = create_posting(n, frequency, token in important, word_count(text))
 					indexes[token].append(p)
+		if batch > 1:
+			s = ""
+			for k,v in sorted(indexes.items()):
+				s += k + " " + str(v) + "\n"
+			file_name = str(batch_num)  + ".txt"
+			with open(file_name, 'w') as data_file:
+				data_file.write(s)	
+			del indexes
+			indexes = dict()
+			batch = 0
+			batch_num += 1
 
-	with open("test.json", 'w') as data_file:
-		json.dump(indexes, data_file, sort_keys=True, indent=4, separators=(',', ': '))	
-
+	print('total words:', len(indexes))
+	print('total documents:', total_docs)
+	print(dict(sorted(indexes.items(), key=lambda x: len(x[1]), reverse=True)[:10]).keys())
 	#return indexes
 
 def get_in_dir(dirname):
@@ -50,7 +67,6 @@ def get_in_dir(dirname):
 	
 def get_files(main_dir) -> list:
 	all_documents = []
-	count = 0
 	for file in os.listdir(main_dir):
 		path = os.path.join(main_dir, file)
 		if os.path.isdir(path):
