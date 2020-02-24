@@ -17,8 +17,9 @@ import math
 #     def get_tfidf(self):
 #         return ( (term_freq / word_count) / self.idf )
 
-def create_posting(id, frequency, important, wordcount):
+def create_posting(docid, frequency, important, wordcount):
     post = dict()
+    post["docID"] = docid
     post["word_count"] = wordcount
     post["term_freq"] = frequency
     post["idf"] = 0
