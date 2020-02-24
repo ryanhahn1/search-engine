@@ -41,7 +41,7 @@ def build_index(Documents):
 		if batch > 1:
 			s = ""
 			for k,v in sorted(indexes.items()):
-				s += k + " " + str(v) + "\n"
+				s += k + " " + json.dumps(v) + "\n"
 			file_name = str(batch_num)  + ".txt"
 			with open(file_name, 'w') as data_file:
 				data_file.write(s)	
