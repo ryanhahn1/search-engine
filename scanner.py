@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from textprocessing import tokenizer, extract_text, extract_important, word_count
+from textprocessing import tokenizer, extract_text, extract_important
 from posting import create_posting
 
 import os
@@ -15,44 +15,47 @@ def scan_documents():
 
 
 def build_index(Documents):
+	directory = os.path.dirname(os.getcwd()) + "/search-engine/index/"
 	indexes = dict()
-	total_docs = len(Documents)
+	total_docs = 0
 	batch_num = 0
 	n = 0
-	batch = 0
+	batch = 1
 
 	for doc in Documents:
 		batch += 1
 		n += 1
 		with open(doc, encoding='utf-8', errors='replace') as json_file:
 			if ".DS_Store" not in doc:
+				print(total_docs)
+				total_docs += 1
 				data = json.load(json_file)
 
 				text = extract_text(data)
+
+				text = re.sub('[^a-z0-9]', ' ', text.lower()).split()
 				
 				tokens = tokenizer(text)
-				important = tokenizer(extract_important(data))
+				#important = tokenizer(extract_important(data))
 
 				for token, frequency in tokens.items():
 					if indexes.get(token, None) == None:
 						indexes[token] = []
-					p = create_posting(n, frequency, token in important, word_count(text))
+					p = create_posting(n, frequency, False, len(text))
 					indexes[token].append(p)
-		if batch > 1:
+		if batch > 1000:
 			s = ""
 			for k,v in sorted(indexes.items()):
 				s += k + " " + json.dumps(v) + "\n"
 			file_name = str(batch_num)  + ".txt"
-			with open(file_name, 'w') as data_file:
+			with open(os.path.join(directory, file_name), 'w') as data_file:
 				data_file.write(s)	
 			del indexes
 			indexes = dict()
 			batch = 0
 			batch_num += 1
 
-	print('total words:', len(indexes))
 	print('total documents:', total_docs)
-	print(dict(sorted(indexes.items(), key=lambda x: len(x[1]), reverse=True)[:10]).keys())
 	#return indexes
 
 def get_in_dir(dirname):
@@ -78,7 +81,7 @@ def get_files(main_dir) -> list:
 	
 
 if __name__ == '__main__':
-	file_location = "ANALYST/www-db_ics_uci_edu"
+	file_location = "DEV"
 	build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
-	
+	#print(len(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location))))
 
