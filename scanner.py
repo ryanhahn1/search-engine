@@ -15,7 +15,7 @@ def scan_documents():
 
 
 def build_index(Documents):
-	directory = os.path.dirname(os.getcwd()) + "/search-engine/index/"
+	directory = os.path.dirname(os.getcwd()) + "/index/"
 	indexes = dict()
 	total_docs = 0
 	batch_num = 0
@@ -32,16 +32,19 @@ def build_index(Documents):
 				data = json.load(json_file)
 
 				text = extract_text(data)
+				important_text = extract_important(data)
 
 				text = re.sub('[^a-z0-9]', ' ', text.lower()).split()
+				important_text = re.sub('[^a-z0-9]', ' ', important_text.lower()).split()
+				
 				
 				tokens = tokenizer(text)
-				#important = tokenizer(extract_important(data))
+				important = tokenizer(important_text)
 
 				for token, frequency in tokens.items():
 					if indexes.get(token, None) == None:
 						indexes[token] = []
-					p = create_posting(n, frequency, False, len(text))
+					p = create_posting(n, frequency, (token in important), len(text))
 					indexes[token].append(p)
 		if batch > 1000:
 			s = ""
@@ -54,8 +57,14 @@ def build_index(Documents):
 			indexes = dict()
 			batch = 0
 			batch_num += 1
+	s = ""
+	for k,v in sorted(indexes.items()):
+		s += k + " " + json.dumps(v) + "\n"
+	file_name = str(batch_num)  + ".txt"
+	with open(os.path.join(directory, file_name), 'w') as data_file:
+		data_file.write(s)	
 
-	print('total documents:', total_docs)
+	#print('total documents:', total_docs)
 	#return indexes
 
 def get_in_dir(dirname):
@@ -81,7 +90,7 @@ def get_files(main_dir) -> list:
 	
 
 if __name__ == '__main__':
-	file_location = "DEV"
+	file_location = "analyst"
 	build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
 	#print(len(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location))))
 

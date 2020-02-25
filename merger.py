@@ -54,18 +54,27 @@ def merge(file_1, file_2):
 			file1.seek(0)
 			file1.write(output)
 			file1.truncate()
-	print(word_total)
+	print(get_word_count())
 
 
 def multimerge(file_list):
-	main_path = os.path.dirname(os.getcwd()) + "/search-engine/index/main.txt"
+	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 	open(main_path, "w")
-	shu.copyfile(file_list[1], main_path)
-	current = 2
+	shu.copyfile(file_list[0], main_path)
+	current = 1
 	while (current < len(file_list)):
 		if ".DS_Store" not in file_list[current]:
 			merge(main_path, file_list[current])
 		current += 1
-			
+
+def get_word_count():
+	with open(os.path.dirname(os.getcwd()) + "/index/main.txt") as main:
+		count = 1
+		for line in main:
+			count += 1
+	return count
+
+
 if __name__ == '__main__':
-	multimerge(get_files(os.path.dirname(os.getcwd()) + "/search-engine/index/"))
+	multimerge(get_files(os.path.dirname(os.getcwd()) + "/index/"))
+	
