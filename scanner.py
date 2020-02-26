@@ -90,7 +90,7 @@ def get_files(main_dir) -> list:
 	
 
 if __name__ == '__main__':
-	file_location = "analyst"
+	file_location = "DEV"
 	build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
 	#print(len(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location))))
 
