@@ -14,7 +14,10 @@ if __name__ == '__main__':
 
 
 	for docid, value in sorted(find_all_boolean(query, main_path).items(), key=lambda x: -x[1]):
-		
+		# print(docid)
 		ranking.append(url_index[str(docid)])
 
-	print(ranking)
+	count = 1
+	while count < 11:
+		print(count, ranking[count - 1])
+		count += 1

@@ -65,3 +65,5 @@ def tokenizer(token) -> dict:
         frequency[stemmed] = count + 1
     return frequency #returns dictionary of terms: count
 
+def query_processor(token):
+    for 
