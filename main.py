@@ -4,7 +4,6 @@ from textprocessing import query_processor
 import os
 import json 
 
-
 def get_results(input):
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 	url_index_file = os.path.dirname(os.getcwd()) + "/index/url_index.json"
