@@ -7,14 +7,11 @@ import math
 def get_index_index(index_path):
 	with open(index_path) as index:
 		current = 0
-		count = 0
 		indexindex = dict() # key = alphanumeric char, value = int (line number)
 		for line in index:
 			if line[0] != current:
-				indexindex[ line[0] ] = count
-				count += 1
-			else:
-				count += 1
+				indexindex[line[0]] = tell()
+				current = line[0]
 		indexindex["last"] = count
 	#print(indexindex)
 	return indexindex
@@ -32,14 +29,15 @@ def find_postings(token, index_path):
 	else:
 		seek_pos = indexindex[chr(ord(token[0]) - 1)]
 
-	while seek_pos <= next_pos:
-		word, list_str = getline(index_path, seek_pos).split(" ", 1)
-		#print(word)
-		if word == token:
-			#print(json.loads(list_str))
-			return json.loads(list_str)
-		else:
-			seek_pos += 1
+	with open(index_path, "r") as index:
+		index.seek(next_pos)
+		for line in index:
+			word, list_str = line.split(" ", 1)
+			#print(word)
+			if word == token:
+				#print(json.loads(list_str))
+				return json.loads(list_str)
+			elif index.tell()
 	print("token not in index")
 	return None
 

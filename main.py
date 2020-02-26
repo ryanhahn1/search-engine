@@ -1,7 +1,9 @@
 from retrieval import find_all_boolean
+from textprocessing import query_processor
 
 import os
 import json 
+
 
 
 if __name__ == '__main__':
@@ -9,7 +11,9 @@ if __name__ == '__main__':
 	url_index_file = os.path.dirname(os.getcwd()) + "/index/url_index.json"
 	with open(url_index_file) as json_file:
 		url_index = json.load(json_file)
-	query = input()
+
+	query = query_processor(input())
+
 	ranking = []
 
 

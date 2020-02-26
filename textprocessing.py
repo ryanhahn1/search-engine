@@ -65,5 +65,11 @@ def tokenizer(token) -> dict:
         frequency[stemmed] = count + 1
     return frequency #returns dictionary of terms: count
 
-def query_processor(token):
-    for 
+def query_processor(s):
+    query = re.sub('[^a-z0-9]', ' ', s.lower()).split()
+    new_query = ""
+    ks = krovetz.PyKrovetzStemmer()
+    for q in query:
+        new_query += ks.stem(q) + " "
+    return new_query
+
