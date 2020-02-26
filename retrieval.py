@@ -3,8 +3,9 @@ import json
 from linecache import getline
 import math
 
-# scans the index and returns a dictionary with positions of letter changes
-def get_index_index(index_path):
+# scans the index and writes a file with dictionary of alphabet index
+def build_index_index(index_path):
+	file_name = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
 	with open(index_path) as index:
 		current = 0
 		indexindex = dict() # key = alphanumeric char, value = int (line number)
@@ -14,11 +15,19 @@ def get_index_index(index_path):
 				current = line[0]
 		indexindex["last"] = index.tell()
 	#print(indexindex)
-	return indexindex
+	with open(file_name, 'w') as II_file:
+		json.dump(indexindex, II_file)
+	print("generated file")
+
+def get_index_index():
+	alpha_path = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
+	with open(alpha_path) as alpha:
+		index_index = json.load(alpha)
+	return index_index
 
 # finds and returns the dictionary for the token, or None if it is not found
 def find_postings(token, index_path):
-	indexindex = get_index_index(index_path)
+	indexindex = get_index_index()
 	next_pos = indexindex[token[0]]
 	print("loaded indexindex")
 
@@ -101,6 +110,7 @@ def score(post, total_docs, total_with_term):
 
 if __name__ == '__main__':
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
+	build_index_index(main_path)
 	#get_index_index(main_path)
-	find_postings("zot", main_path)
-	find_all_boolean("zot machine", main_path)
+	#find_postings("zot", main_path)
+	find_all_boolean("zot machine learning", main_path)
