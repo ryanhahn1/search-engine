@@ -22,6 +22,6 @@ if __name__ == '__main__':
 		ranking.append(url_index[str(docid)])
 
 	count = 1
-	while count < 11:
+	while count < 11 and count < len(ranking):
 		print(count, ranking[count - 1])
 		count += 1
