@@ -78,7 +78,7 @@ def find_all_boolean(query, index_path):
 				#print(token, [p for p in words[token] if p["docID"] == key][0]["docID"])
 				current_score += score([p for p in words[token] if p["docID"] == key][0], 55393, len(words[token]))
 		good_posts[key] = current_score
-	print(good_posts)
+	return good_posts
 	
 
 

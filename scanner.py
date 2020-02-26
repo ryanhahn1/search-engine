@@ -87,10 +87,26 @@ def get_files(main_dir) -> list:
 			all_documents.append(path)
 	return all_documents
 
-	
+
+def build_url_index(Documents):
+	directory = os.path.dirname(os.getcwd()) + "/index/"
+	n = 0
+	url_index = dict()
+	for doc in Documents:
+		n += 1
+		with open(doc, encoding='utf-8', errors='replace') as json_file:
+			if ".DS_Store" not in doc:
+				data = json.load(json_file)
+				url_index[n] = data['url']
+				print(url_index[n], data['url'])
+	file_name = os.path.join(directory, "url_index.json")
+	with open(file_name, 'w') as url_file:
+		json.dump(url_index, url_file)
+
 
 if __name__ == '__main__':
 	file_location = "DEV"
-	build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+	#build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+	build_url_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
 	#print(len(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location))))
 
