@@ -19,8 +19,8 @@ def merge(file_1, file_2):
 					word1, list1str = line1.split(" ", 1)
 					word2, list2str = line2.split(" ", 1)
 					#print(word1, word2)
-					list1 = json.loads(list1str.replace("\'", "\""))
-					list2 = json.loads(list2str.replace("\'", "\""))
+					list1 = json.loads(list1str)
+					list2 = json.loads(list2str)
 					#print(word2)
 					#print(line1.split(" ", 1)[1])
 					#list1 = json.loads(line1.split(" ", 1)[1])
@@ -58,17 +58,17 @@ def merge(file_1, file_2):
 
 
 def multimerge(file_list):
-	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
+	main_path = os.path.dirname(os.getcwd()) + "/index/not_main.txt"
 	open(main_path, "w")
 	shu.copyfile(file_list[0], main_path)
 	current = 1
 	while (current < len(file_list)):
-		if ".DS_Store" not in file_list[current]:
+		if ".txt" in file_list[current]:
 			merge(main_path, file_list[current])
 		current += 1
 
 def get_word_count():
-	with open(os.path.dirname(os.getcwd()) + "/index/main.txt") as main:
+	with open(os.path.dirname(os.getcwd()) + "/index/not_main.txt") as main:
 		count = 1
 		for line in main:
 			count += 1

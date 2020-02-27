@@ -1,11 +1,11 @@
 from bs4 import BeautifulSoup
 from textprocessing import tokenizer, extract_text, extract_important
 from posting import create_posting
+from simhash import Simhash
 
 import os
 import json
 import re
-import simhash
 
 
 def scan_documents():
@@ -29,7 +29,7 @@ def build_index(Documents):
 		n += 1
 		with open(doc, encoding='utf-8', errors='replace') as json_file:
 			if ".DS_Store" not in doc:
-				print(total_docs)
+				
 				total_docs += 1
 				data = json.load(json_file)
 
@@ -111,20 +111,20 @@ def is_not_duplicate(text, simhashes):
 	current_sim = Simhash(text)
 
 	if len(simhashes) == 0:
-        simhashes.add(current_sim)
-        return True
+		simhashes.add(current_sim)
+		return True
 	
 	for x in simhashes:
-        if current_sim.distance(x) <= 3:
-            print("duplicate detected")
-            return False
-    simhashes.add(current_sim)
+		if current_sim.distance(x) <= 1:
+			print("duplicate detected")
+			return False
+	simhashes.add(current_sim)
 	return True
 
 
 if __name__ == '__main__':
 	file_location = "DEV"
-	#build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
-	build_url_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+	build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+	#build_url_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
 	#print(len(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location))))
 

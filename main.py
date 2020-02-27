@@ -15,7 +15,7 @@ def get_results(input):
 		ranking.append(url_index[str(docid)])
 	return ranking
 
-if __name__ == '__main__':
+"""if __name__ == '__main__':
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 	url_index_file = os.path.dirname(os.getcwd()) + "/index/url_index.json"
 	with open(url_index_file) as json_file:
@@ -33,4 +33,4 @@ if __name__ == '__main__':
 	count = 1
 	while count < 11 and count < len(ranking):
 		print(count, ranking[count - 1])
-		count += 1
+		count += 1"""

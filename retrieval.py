@@ -74,11 +74,11 @@ def find_all_boolean(query, index_path):
 		# add postings with all words to good_posts
 		if value == len(query.split()):
 			#print("good")
-			good_posts[key] = 0
+			good_posts[key] = [p["score"] for p in words[token] if p["docID"] == key][0]
 		else:
 			#print("bad")
 			pass
-	print("calculating scores")
+	"""print("calculating scores")
 	# change good_postings value to be the score
 	print(len(good_posts))
 	for key, value in good_posts.items():
@@ -94,7 +94,7 @@ def find_all_boolean(query, index_path):
 				current_score += score(post_list[0], 55393, len(words[token]))
 		print("docID:", key, "score", current_score)
 		good_posts[key] = current_score
-	print("calculated scores")
+	print("calculated scores")"""
 	return good_posts
 	
 
@@ -111,25 +111,26 @@ def score(post, total_docs, total_with_term):
 		return get_tfidf(post, total_docs, total_with_term)
 
 def build_scores(path):
-	new_path = os.path.dirname(os.getcwd()) + "/index/scored.txt"
+	new_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 	scored = open(new_path, 'w')
-	index = open(path)
+	index = open(path, "r")
 	for line in index:
 		word, list_str = line.split(" ", 1)
-		print(word)
+		#print(word)
 		list_real = json.loads(list_str)
 		for post in list_real:
 			post["score"] = score(post, 55393, len(list_real))
-		s = word + " " + json.dumps(post) + "\n"
+		s = word + " " + json.dumps(list_real) + "\n"
 		scored.write(s)
 
 
 
 if __name__ == '__main__':
-	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
-	not_path = os.path.dirname(os.getcwd()) + "/index/0.txt"
-	#build_index_index(main_path)
-	#get_index_index(main_path)
-	#find_postings("zot", main_path)
-	#find_all_boolean("zot machine learning", main_path)
-	build_scores(main_path)
+	main_path = os.path.dirname(os.getcwd()) + "/index/not_main.txt"
+	"""not_path = os.path.dirname(os.getcwd()) + "/index/0.txt"
+	build_index_index(main_path)
+	get_index_index(main_path)
+	find_postings("machine", main_path)
+	find_all_boolean("zot machine learning", main_path)"""
+	#build_scores(main_path)
+	find_postings("machine", main_path)
