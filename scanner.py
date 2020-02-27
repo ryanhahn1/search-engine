@@ -5,6 +5,7 @@ from posting import create_posting
 import os
 import json
 import re
+import simhash
 
 
 def scan_documents():
@@ -17,6 +18,7 @@ def scan_documents():
 def build_index(Documents):
 	directory = os.path.dirname(os.getcwd()) + "/index/"
 	indexes = dict()
+	simhash = set()
 	total_docs = 0
 	batch_num = 0
 	n = 0
@@ -34,18 +36,20 @@ def build_index(Documents):
 				text = extract_text(data)
 				important_text = extract_important(data)
 
-				text = re.sub('[^a-z0-9]', ' ', text.lower()).split()
-				important_text = re.sub('[^a-z0-9]', ' ', important_text.lower()).split()
-				
-				
-				tokens = tokenizer(text)
-				important = tokenizer(important_text)
+				#NOT DUPLICATE
+				if is_not_duplicate(text, simhash):
+					text = re.sub('[^a-z0-9]', ' ', text.lower()).split()
+					important_text = re.sub('[^a-z0-9]', ' ', important_text.lower()).split()
+					
+					
+					tokens = tokenizer(text)
+					important = tokenizer(important_text)
 
-				for token, frequency in tokens.items():
-					if indexes.get(token, None) == None:
-						indexes[token] = []
-					p = create_posting(n, frequency, (token in important), len(text))
-					indexes[token].append(p)
+					for token, frequency in tokens.items():
+						if indexes.get(token, None) == None:
+							indexes[token] = []
+						p = create_posting(n, frequency, (token in important), len(text))
+						indexes[token].append(p)
 		if batch > 1000:
 			s = ""
 			for k,v in sorted(indexes.items()):
@@ -102,6 +106,20 @@ def build_url_index(Documents):
 	file_name = os.path.join(directory, "url_index.json")
 	with open(file_name, 'w') as url_file:
 		json.dump(url_index, url_file)
+
+def is_not_duplicate(text, simhashes):
+	current_sim = Simhash(text)
+
+	if len(simhashes) == 0:
+        simhashes.add(current_sim)
+        return True
+	
+	for x in simhashes:
+        if current_sim.distance(x) <= 3:
+            print("duplicate detected")
+            return False
+    simhashes.add(current_sim)
+	return True
 
 
 if __name__ == '__main__':
