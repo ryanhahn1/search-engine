@@ -69,6 +69,7 @@ def find_all_boolean(query, index_path):
 			else:
 				all_posts[post["docID"]] = 1
 	print("found all postings")
+	print(len(all_posts))
 	#print(len(query.split()))
 	for key, value in all_posts.items():
 		# add postings with all words to good_posts
