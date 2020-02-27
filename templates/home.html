@@ -16,6 +16,8 @@
         </form>
     </div>
     {% for url in results %}
-    <div> {{url}}</div>
+    <div>
+        <a href={{url}} target="_blank">{{url}}</a>
+    </div>
     {% endfor %}
 {% endblock content %}
