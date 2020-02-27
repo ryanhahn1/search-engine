@@ -25,11 +25,15 @@ def get_index_index():
 		index_index = json.load(alpha)
 	return index_index
 
+def get_url_index():
+	url_index_file = os.path.dirname(os.getcwd()) + "/index/url_index.json"
+	with open(url_index_file) as json_file:
+		url_index = json.load(json_file)
+	return url_index
+
 # finds and returns the dictionary for the token, or None if it is not found
-def find_postings(token, index_path):
-	indexindex = get_index_index()
+def find_postings(token, index_path, indexindex):
 	next_pos = indexindex[token[0]]
-	print("loaded indexindex")
 
 	# next_pos = when the iteration should end (next letter)
 	if token[0] == "0":
@@ -42,9 +46,10 @@ def find_postings(token, index_path):
 	with open(index_path, "r") as index:
 		index.seek(next_pos)
 		for line in iter(index.readline, ''):
-			word, list_str = line.split(" ", 1)
+			word = line.split(" ", 1)[0]
 			#print(word)
 			if word == token:
+				list_str = line.split(" ", 1)[1]
 				#print(json.loads(list_str))
 				return json.loads(list_str)
 			elif index.tell() == next_pos:
@@ -53,14 +58,14 @@ def find_postings(token, index_path):
 	return None
 
 # return a dictionary of the docID and the score
-def find_all_boolean(query, index_path):
+def find_all_boolean(query, index_path, index_index):
 	words = dict() # key = token, value = list of postings, postings = dictionary
 	all_posts = dict() # key = docID, value = number of instances
 	good_posts = dict() # key = docID, value = summed score
 
 	# adds every posting for all postings to all_posts
 	for token in query.split():
-		postings = find_postings(token, index_path)
+		postings = find_postings(token, index_path, index_index)
 		words[token] = postings
 		for post in postings:
 			#print(post)
@@ -69,16 +74,21 @@ def find_all_boolean(query, index_path):
 			else:
 				all_posts[post["docID"]] = 1
 	print("found all postings")
-	print(len(all_posts))
+	print("number of docs with any of the words:", len(all_posts))
 	#print(len(query.split()))
 	for key, value in all_posts.items():
 		# add postings with all words to good_posts
 		if value == len(query.split()):
 			#print("good")
-			good_posts[key] = [p["score"] for p in words[token] if p["docID"] == key][0]
+			current_score = 0
+			for token2 in query.split():
+				current_score += [p["score"] for p in words[token] if p["docID"] == key][0]
+			good_posts[key] = current_score
 		else:
 			#print("bad")
 			pass
+	print("number of docs with all words:", len(good_posts))
+
 	"""print("calculating scores")
 	# change good_postings value to be the score
 	print(len(good_posts))
