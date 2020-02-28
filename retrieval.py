@@ -84,6 +84,7 @@ def find_postings(token, index_path, indexindex):
 		print(word)
 		list_str = line.split(" ", 1)[1]
 		if word == token:
+			#print(json.loads(list_str))
 			return json.loads(list_str)
 	print("token not in index")
 	return None
@@ -94,21 +95,31 @@ def find_all_boolean(query, index_path, index_index):
 	all_posts = dict() # key = docID, value = number of instances
 	good_posts = dict() # key = docID, value = summed score
 
-	# adds every posting for all postings to all_posts
-	for token in query.split():
+	if len(query.split()) == 1:
+		token = query.split()[0]
 		postings = find_postings(token, index_path, index_index)
-		words[token] = postings
 		print("found all postings")
+		words[token] = postings
 		for post in postings:
-			# assign or increment the number of times post is seen
-			id = post["docID"]
-			if id in all_posts:
-				all_posts[id] += 1
-				# add to good_posts if the post is seen enough times
-				if all_posts[id] == len(query.split()):
-					good_posts[id] = 0
-			else:
-				all_posts[id] = 1
+			good_posts[post["docID"]] = 0
+
+	else:
+		# adds every posting for all postings to all_posts
+		for token in query.split():
+			postings = find_postings(token, index_path, index_index)
+			words[token] = postings
+			print("found all postings")
+			for post in postings:
+				# assign or increment the number of times post is seen
+				id = post["docID"]
+				#print(id)
+				if id in all_posts:
+					all_posts[id] += 1
+					# add to good_posts if the post is seen enough times
+					if all_posts[id] == len(query.split()):
+						good_posts[id] = 0
+				else:
+					all_posts[id] = 1
 	print("found all boolean results")
 	for key, value in good_posts.items():
 		good_posts[key] = sum_score(query, key, words)
