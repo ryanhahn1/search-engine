@@ -4,16 +4,32 @@ from linecache import getline
 import math
 
 # scans the index and writes a file with dictionary of alphabet index
+# def build_index_index(index_path):
+# 	file_name = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
+# 	with open(index_path) as index:
+# 		current = 0
+# 		indexindex = dict() # key = alphanumeric char, value = int (line number)
+# 		for line in iter(index.readline, ''):
+# 			if line[0] != current:
+# 				indexindex[line[0]] = index.tell()
+# 				current = line[0]
+# 		indexindex["last"] = index.tell()
+# 	#print(indexindex)
+# 	with open(file_name, 'w') as II_file:
+# 		json.dump(indexindex, II_file)
+# 	print("generated file")
+
+
 def build_index_index(index_path):
 	file_name = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
 	with open(index_path) as index:
-		current = 0
-		indexindex = dict() # key = alphanumeric char, value = int (line number)
+		indexindex = dict() # key = word, value = seek (line number)
+		pos = 0
 		for line in iter(index.readline, ''):
-			if line[0] != current:
-				indexindex[line[0]] = index.tell()
-				current = line[0]
-		indexindex["last"] = index.tell()
+			word = line.split(" ", 1)[0]
+			print(word)
+			indexindex[word] = pos
+			pos = index.tell()
 	#print(indexindex)
 	with open(file_name, 'w') as II_file:
 		json.dump(indexindex, II_file)
@@ -32,28 +48,43 @@ def get_url_index():
 	return url_index
 
 # finds and returns the dictionary for the token, or None if it is not found
-def find_postings(token, index_path, indexindex):
-	next_pos = indexindex[token[0]]
+# def find_postings(token, index_path, indexindex):
+# 	next_pos = indexindex[token[0]]
 
-	# next_pos = when the iteration should end (next letter)
-	if token[0] == "0":
-		seek_pos = 0
-	elif token[0] == "a":
-		seek_pos = indexindex["9"]
-	else:
-		seek_pos = indexindex[chr(ord(token[0]) - 1)]
-	print("finding: ", token)
+# 	# next_pos = when the iteration should end (next letter)
+# 	if token[0] == "0":
+# 		seek_pos = 0
+# 	elif token[0] == "a":
+# 		seek_pos = indexindex["9"]
+# 	else:
+# 		seek_pos = indexindex[chr(ord(token[0]) - 1)]
+# 	print("finding: ", token)
+# 	with open(index_path, "r") as index:
+# 		index.seek(next_pos)
+# 		for line in iter(index.readline, ''):
+# 			word = line.split(" ", 1)[0]
+# 			#print(word)
+# 			if word == token:
+# 				list_str = line.split(" ", 1)[1]
+# 				#print(json.loads(list_str))
+# 				return json.loads(list_str)
+# 			elif index.tell() == next_pos:
+# 				break
+# 	print("token not in index")
+# 	return None
+
+def find_postings(token, index_path, indexindex):
+	next_pos = indexindex[token]
+
+	#print("finding: ", token)
 	with open(index_path, "r") as index:
 		index.seek(next_pos)
-		for line in iter(index.readline, ''):
-			word = line.split(" ", 1)[0]
-			#print(word)
-			if word == token:
-				list_str = line.split(" ", 1)[1]
-				#print(json.loads(list_str))
-				return json.loads(list_str)
-			elif index.tell() == next_pos:
-				break
+		line = index.readline()
+		word = line.split(" ", 1)[0]
+		print(word)
+		list_str = line.split(" ", 1)[1]
+		if word == token:
+			return json.loads(list_str)
 	print("token not in index")
 	return None
 
@@ -137,11 +168,11 @@ def build_scores(path):
 
 
 if __name__ == '__main__':
-	main_path = os.path.dirname(os.getcwd()) + "/index/not_main.txt"
-	"""not_path = os.path.dirname(os.getcwd()) + "/index/0.txt"
+	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
+	not_path = os.path.dirname(os.getcwd()) + "/index/0.txt"
 	build_index_index(main_path)
-	get_index_index(main_path)
-	find_postings("machine", main_path)
-	find_all_boolean("zot machine learning", main_path)"""
+	#get_index_index(main_path)
+	#find_postings("machine", main_path)
+	#find_all_boolean("zot machine learning", main_path)
 	#build_scores(main_path)
-	find_postings("machine", main_path)
+	#find_postings("machine", main_path)
