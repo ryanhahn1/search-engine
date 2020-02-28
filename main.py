@@ -8,7 +8,9 @@ def get_results(input, index_index, url_index):
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 	query = query_processor(input)
 	ranking = []
-	for docid, value in sorted(find_all_boolean(query, main_path, index_index).items(), key=lambda x: -x[1]):
+	results = find_all_boolean(query, main_path, index_index)
+	print("sorting")
+	for docid, value in sorted(results.items(), key=lambda x: -x[1]):
 		ranking.append(url_index[str(docid)])
 	return ranking
 

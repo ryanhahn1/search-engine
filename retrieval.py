@@ -98,48 +98,29 @@ def find_all_boolean(query, index_path, index_index):
 	for token in query.split():
 		postings = find_postings(token, index_path, index_index)
 		words[token] = postings
+		print("found all postings")
 		for post in postings:
-			#print(post)
-			if post["docID"] in all_posts:
-				all_posts[post["docID"]] += 1
+			# assign or increment the number of times post is seen
+			id = post["docID"]
+			if id in all_posts:
+				all_posts[id] += 1
+				# add to good_posts if the post is seen enough times
+				if all_posts[id] == len(query.split()):
+					good_posts[id] = 0
 			else:
-				all_posts[post["docID"]] = 1
-	print("found all postings")
-	print("number of docs with any of the words:", len(all_posts))
-	#print(len(query.split()))
-	for key, value in all_posts.items():
-		# add postings with all words to good_posts
-		if value == len(query.split()):
-			#print("good")
-			current_score = 0
-			for token2 in query.split():
-				current_score += [p["score"] for p in words[token] if p["docID"] == key][0]
-			good_posts[key] = current_score
-		else:
-			#print("bad")
-			pass
-	print("number of docs with all words:", len(good_posts))
-
-	"""print("calculating scores")
-	# change good_postings value to be the score
-	print(len(good_posts))
+				all_posts[id] = 1
+	print("found all boolean results")
 	for key, value in good_posts.items():
-		#print("computing scores of docID", key)
-		current_score = 0
-		# sum the token scores for each doc
-		for token in query.split():
-			#print(token)
-			post_list = [p for p in words[token] if p["docID"] == key]
-			#print("created post_list")
-			if post_list:
-				#print(token, [p for p in words[token] if p["docID"] == key][0]["docID"])
-				current_score += score(post_list[0], 55393, len(words[token]))
-		print("docID:", key, "score", current_score)
-		good_posts[key] = current_score
-	print("calculated scores")"""
+		good_posts[key] = sum_score(query, key, words)
+
+	print("number of docs with all words:", len(good_posts))
 	return good_posts
 	
-
+def sum_score(query, id, words):
+	current_score = 0
+	for token2 in query.split():
+		current_score += [p["score"] for p in words[token2] if p["docID"] == id][0]
+	return current_score
 
 # total_with_term = length of postings list for that word
 def get_tfidf(post, total_docs, total_with_term): 
