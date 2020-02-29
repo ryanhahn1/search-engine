@@ -18,7 +18,7 @@ def home():
     results = []
     start = time.time()
     if search.validate_on_submit():
-        results = get_results(search.query.data, indexindex, urlindex)
+        results = get_results(search.query.data, indexindex, urlindex)[0:100]
     end = time.time()
     print("time elapsed =", end - start)
     return render_template('home.html', title = 'Home', search = search, results = results)
