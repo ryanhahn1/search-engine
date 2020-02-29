@@ -86,8 +86,8 @@ def find_postings(token, index_path, indexindex):
 		list_str = line.split(" ", 1)[1]
 		if word == token:
 			#print(json.loads(list_str))
-			print(json.loads(list_str)[:1000])
-			return json.loads(list_str)[:1000]
+		#	print(json.loads(list_str)[:5000])
+			return json.loads(list_str)[:5000]
 	print("token not in index")
 	return None
 
