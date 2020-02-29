@@ -80,12 +80,14 @@ def find_postings(token, index_path, indexindex):
 	with open(index_path, "r") as index:
 		index.seek(next_pos)
 		line = index.readline()
+		#print(line)
 		word = line.split(" ", 1)[0]
 		print(word)
 		list_str = line.split(" ", 1)[1]
 		if word == token:
 			#print(json.loads(list_str))
-			return json.loads(list_str)
+			print(json.loads(list_str)[:1000])
+			return json.loads(list_str)[:1000]
 	print("token not in index")
 	return None
 
@@ -157,14 +159,28 @@ def build_scores(path):
 		s = word + " " + json.dumps(list_real) + "\n"
 		scored.write(s)
 
+def build_ranked(path):
+	new_path = os.path.dirname(os.getcwd()) + "/index/ranked.txt"
+	scored = open(new_path, 'w')
+	index = open(path, "r")
+	for line in index:
+		word, list_str = line.split(" ", 1)
+		print(word)
+		list_real = json.loads(list_str)
+		list_real = sorted(list_real, key = lambda x: -x["score"])
+		s = word + " " + json.dumps(list_real) + "\n"
+		scored.write(s)
 
 
 if __name__ == '__main__':
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 	not_path = os.path.dirname(os.getcwd()) + "/index/0.txt"
-	build_index_index(main_path)
+	indexindex = get_index_index()
+	#build_ranked(main_path)
+	#urlindex = get_url_index()
+	#build_index_index(main_path)
 	#get_index_index(main_path)
-	#find_postings("machine", main_path)
+	#find_postings("zot", main_path, indexindex)
 	#find_all_boolean("zot machine learning", main_path)
 	#build_scores(main_path)
 	#find_postings("machine", main_path)
