@@ -9,7 +9,7 @@ def build_scores(path):
 	index = open(path, "r")
 	for line in index:
 		word, list_str = line.split(" ", 1)
-		print(word)
+		#print(word)
 		list_real = json.loads(list_str)
 		for post in list_real:
 			post["score"] = score(post, 55393, len(list_real))
@@ -42,7 +42,7 @@ def build_index_index(index_path):
 		pos = 0
 		for line in iter(index.readline, ''):
 			word = line.split(" ", 1)[0]
-			print(word)
+			#print(word)
 			indexindex[word] = pos
 			pos = index.tell()
 	#print(indexindex)
@@ -58,9 +58,9 @@ def build_threshold():
 	with open(new_path, "w") as threshold_index:
 		for line in index:
 			word, list_str = line.split(" ", 1)
-			print(word)
+			#print(word)
 			list_real = json.loads(list_str)
-			print(len(list_real))
+			#print(len(list_real))
 			threshold[word] = len(list_real)
 		json.dump(threshold, threshold_index)
 	index.close()
@@ -74,14 +74,12 @@ def score(post, total_docs, total_with_term):
 		return get_tfidf(post, total_docs, total_with_term)
 
 # total_with_term = length of postings list for that word
-def get_tfidf(post, total_docs, total_with_term): 
-	return ( (1 + math.log( post["term_freq"]) / post["word_count"] ) / math.log( total_docs / total_with_term ) )
+def get_tfidf(post, total_docs, total_with_term): 	 
+	return ( (1 + math.log( post["term_freq"]) / post["word_count"] ) * math.log( total_docs / total_with_term ) )
 
 if __name__ == '__main__':
 	old_path = os.path.dirname(os.getcwd()) + "/index/old_main.txt"
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
-	#not_path = os.path.dirname(os.getcwd()) + "/index/0.txt"
 	build_scores(old_path)
-	#build_ranked(main_path)
 	build_index_index(main_path)
 	build_threshold()
