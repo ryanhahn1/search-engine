@@ -57,7 +57,7 @@ def find_all_boolean(q, index_path, index_index, threshold):
 		if postings:
 			#print(postings)
 			if restrict:
-					postings = postings[:500]
+					postings = postings[:2500]
 			for post in postings:
 				good_posts[post["docID"]] = 0
 		else:
@@ -70,7 +70,7 @@ def find_all_boolean(q, index_path, index_index, threshold):
 			#print("found all postings")
 			if postings:
 				if restrict:
-					postings = postings[:500]
+					postings = postings[:2500]
 				for post in postings:
 					# assign or increment the number of times post is seen
 					id = post["docID"]
