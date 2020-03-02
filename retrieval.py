@@ -150,9 +150,12 @@ def find_all_boolean(q, index_path, index_index, threshold):
 	return good_posts
 	
 def sum_score(query, id, words):
+	# compute score for query
+	# (score_query * score_document) / length?_d
+
 	current_score = 0
-	for token2 in query:
-		current_score += [p["score"] for p in words[token2] if p["docID"] == id][0]
+	for token in query:
+		current_score += [p["score"] for p in words[token] if p["docID"] == id][0]
 	return current_score
 
 # total_with_term = length of postings list for that word
@@ -226,8 +229,9 @@ def build_threshold():
 if __name__ == '__main__':
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 	#not_path = os.path.dirname(os.getcwd()) + "/index/0.txt"
-	indexindex = get_index_index()
-	threshold_index = get_threshold_index()
+	#indexindex = get_index_index()
+	#threshold_index = get_threshold_index()
+	#build_threshold()
 	#build_ranked(main_path)
 	#urlindex = get_url_index()
 	#build_index_index(main_path)

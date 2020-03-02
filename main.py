@@ -16,6 +16,7 @@ def get_results(input, index_index, url_index, threshold_index):
 		return ranking
 	else:
 		return ["No Matching Results"]
+
 """if __name__ == '__main__':
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 	url_index_file = os.path.dirname(os.getcwd()) + "/index/url_index.json"
