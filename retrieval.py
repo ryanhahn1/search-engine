@@ -89,13 +89,13 @@ def find_postings(token, index_path, indexindex):
 			line = index.readline()
 			#print(line)
 			word = line.split(" ", 1)[0]
-			print(word)
+			#print(word)
 			list_str = line.split(" ", 1)[1]
 			if word == token:
 				#print(json.loads(list_str))
 			#	print(json.loads(list_str)[:5000])
 				return json.loads(list_str)
-	print("token not in index")
+	#print("token not in index")
 	return None
 
 # return a dictionary of the docID and the score
@@ -109,13 +109,13 @@ def find_all_boolean(q, index_path, index_index, threshold):
 	if len(query) == 1:
 		token = query[0]
 		postings = find_postings(token, index_path, index_index)
-		print("found all postings")
+		#print("found all postings")
 		words[token] = postings
-		print(postings)
+		#print(postings)
 		if postings:
-			print(postings)
+			#print(postings)
 			if restrict:
-					postings = postings[:1000]
+					postings = postings[:500]
 			for post in postings:
 				good_posts[post["docID"]] = 0
 		else:
@@ -125,10 +125,10 @@ def find_all_boolean(q, index_path, index_index, threshold):
 		for token in query:
 			postings = find_postings(token, index_path, index_index)
 			words[token] = postings
-			print("found all postings")
+			#print("found all postings")
 			if postings:
 				if restrict:
-					postings = postings[:1000]
+					postings = postings[:500]
 				for post in postings:
 					# assign or increment the number of times post is seen
 					id = post["docID"]
@@ -142,11 +142,11 @@ def find_all_boolean(q, index_path, index_index, threshold):
 						all_posts[id] = 1
 			else:
 				return None
-	print("found all boolean results")
+	#print("found all boolean results")
 	for key, value in good_posts.items():
 		good_posts[key] = sum_score(query, key, words)
 
-	print("number of docs with all words:", len(good_posts))
+	#print("number of docs with all words:", len(good_posts))
 	return good_posts
 	
 def sum_score(query, id, words):
@@ -177,7 +177,7 @@ def query_processing(s, threshold):
 	old_query = s.split()
 	for word in old_query:
 		if word not in stop_words:
-			if threshold_index[word] < 100:
+			if word in threshold_index and threshold_index[word] < 100:
 				restrict = False
 			new_query.append(word)
 	if len(new_query) == 0:
