@@ -8,9 +8,10 @@ import os
 
 def createGraph(Documents):
     directory = os.path.dirname(os.getcwd()) + "/index/"
-    G = nx.Graph()
-    url_link_dict = get_url_index()
-    url_set = set(url_link_dict.values())
+    G = nx.DiGraph()
+    url_links = get_url_index()
+    url_link_dict = {y:x for x,y in url_links.items()}
+    url_set = set(url_link_dict.keys())
     n = 0
     for doc in Documents:
         n += 1
@@ -21,9 +22,8 @@ def createGraph(Documents):
                 soup = BeautifulSoup(data['content'], 'html.parser')
                 for link in soup.findAll('a', attrs={'href': re.compile("^http://")}):
                     if link.get('href') in url_set:
-                        G.add_edge(n, url_link_dict.get(link.get('href')))
-    H = nx.DiGraph(G)
-    pr = nx.pagerank(H, alpha=0.9)
+                        G.add_edge(n, int(url_link_dict.get(link.get('href'))))
+    pr = nx.pagerank(G)
     file_name = os.path.join(directory, "url_ranking.json")
     with open(file_name, 'w') as url_file:
         json.dump(pr, url_file)
