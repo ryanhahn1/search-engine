@@ -1,8 +1,6 @@
 from retrieval import get_url_index
 import networkx as nx
 from bs4 import BeautifulSoup
-import urllib.request as urllib2
-from urllib.request import Request, urlopen
 from scanner import get_files
 import re
 import json
