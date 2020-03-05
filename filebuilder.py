@@ -67,17 +67,12 @@ def build_threshold():
 	print("generated threshold")
 
 def score(post, total_docs, total_with_term):
-	if post["importance"]:
-		# adjust coefficient
-		print("important", 1.3 * get_tfidf(post, total_docs, total_with_term))
-		return 2 * get_tfidf(post, total_docs, total_with_term)
-	else:
-		print(get_tfidf(post, total_docs, total_with_term))
-		return get_tfidf(post, total_docs, total_with_term)
+	return get_tfidf(post, total_docs, total_with_term)
 
 # total_with_term = length of postings list for that word
 def get_tfidf(post, total_docs, total_with_term):
-	tfidf = ( (math.log(1 + post["term_freq"] / post["word_count"]) ) * math.log( total_docs / total_with_term ) )
+	# / post["word_count"])
+	tfidf = ( (1 + math.log(post["term_freq"] ) * math.log( total_docs / total_with_term ) )
 	if tfidf < 0:
 		print("NEGATIVE SCORE REEEEEEEEEEEE", tfidf)
 	return tfidf
