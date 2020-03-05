@@ -9,7 +9,6 @@ def get_results(input, index_index, url_index, threshold_index):
 	query = query_processor(input)
 	ranking = []
 	results = find_all_boolean(query, main_path, index_index, threshold_index)
-	print("sorting")
 	if results:
 		for docid, value in sorted(results.items(), key=lambda x: -x[1]):
 			ranking.append(url_index[str(docid)])
