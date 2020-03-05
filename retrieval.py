@@ -102,7 +102,7 @@ def sum_score(query, id, words):
 	for token in query:
 		# find the vectors for document and token
 		if [p["importance"] for p in words[token] if p["docID"] == id][0]:
-			importance_sum = importance_sum * 1.2
+			importance_sum = importance_sum * 1
 		doc_score = [p["score"] for p in words[token] if p["docID"] == id][0]
 		token_score = query.count(token) * (55393 / len(words[token]))
 		# add the vectors to the sums
