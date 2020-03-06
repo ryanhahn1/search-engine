@@ -23,30 +23,33 @@ def createGraph(Documents):
                 for link in soup.findAll('a', attrs={'href': re.compile("^http://")}):
                     if link.get('href') in url_set:
                         G.add_edge(n, int(url_link_dict.get(link.get('href'))))
+                    else:
+                        G.add_edge(n, link.get('href'))
     pr = nx.pagerank(G)
+
     file_name = os.path.join(directory, "url_ranking.json")
     with open(file_name, 'w') as url_file:
         json.dump(pr, url_file)
     print("ranking finished")
 
-def update_pagerank(path):
-	print("updating pagerank scores")
-	new_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
-	scored = open(new_path, 'w')
-	index = open(path, "r")
-	for line in index:
-		word, list_str = line.split(" ", 1)
-		#print(word)
-		list_real = json.loads(list_str)
-		for post in list_real:
-			post["score"] = score(post, 55393, len(list_real))
-		list_real = sorted(list_real, key = lambda x: -x["score"])
-		s = word + " " + json.dumps(list_real) + "\n"
-		scored.write(s)
-	index.close()
-	scored.close()
-	print("generated ranked")
+# def update_pagerank(path):
+# 	print("updating pagerank scores")
+# 	new_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
+# 	scored = open(new_path, 'w')
+# 	index = open(path, "r")
+# 	for line in index:
+# 		word, list_str = line.split(" ", 1)
+# 		#print(word)
+# 		list_real = json.loads(list_str)
+# 		for post in list_real:
+# 			post["score"] = score(post, 55393, len(list_real))
+# 		list_real = sorted(list_real, key = lambda x: -x["score"])
+# 		s = word + " " + json.dumps(list_real) + "\n"
+# 		scored.write(s)
+# 	index.close()
+# 	scored.close()
+# 	print("generated ranked")
 
 if __name__ == "__main__":
     file_location = "DEV"
-    #createGraph(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+    createGraph(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
