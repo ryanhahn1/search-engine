@@ -72,7 +72,7 @@ def score(post, total_docs, total_with_term):
 # total_with_term = length of postings list for that word
 def get_tfidf(post, total_docs, total_with_term):
 	# / post["word_count"])
-	tfidf = ( (1 + math.log(post["term_freq"] )) * math.log( total_docs / total_with_term ) )
+	tfidf = ( math.log(1 + (post["term_freq"])) * math.log( total_docs / total_with_term ) )
 	return tfidf
 
 if __name__ == '__main__':
