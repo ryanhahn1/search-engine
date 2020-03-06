@@ -5,3 +5,4 @@ from wtforms.validators import DataRequired
 class Search(FlaskForm):
     query = StringField('Search', validators=[DataRequired()])
     submit = SubmitField('Enter')
+    load = SubmitField('Load More')
