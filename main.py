@@ -1,8 +1,9 @@
-from retrieval import find_all_boolean, get_index_index
+from retrieval import find_all_boolean, get_index_index, find_postings, get_url_index, get_threshold_index, get_url_ranking
 from textprocessing import query_processor
 
 import os
 import json 
+import time
 
 def get_results(input, index_index, url_index, threshold_index, urlrank):
 	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
@@ -12,29 +13,24 @@ def get_results(input, index_index, url_index, threshold_index, urlrank):
 	if results:
 		count = 0
 		for docid, value in sorted(results.items(), key=lambda x: -x[1]):
-			if count < 11:
-				print(url_index[str(docid)], value)
+			#if count < 11:
+				#print(url_index[str(docid)], value)
 			ranking.append(url_index[str(docid)])
-			count += 1
+			#count += 1
 		return ranking
 	else:
 		return ["No Matching Results"]
 
-"""if __name__ == '__main__':
-	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
-	url_index_file = os.path.dirname(os.getcwd()) + "/index/url_index.json"
+
+if __name__ == '__main__':
+	
+	
 	indexindex = get_index_index()
-	with open(url_index_file) as json_file:
-		url_index = json.load(json_file)
-
-	query = query_processor(input())
-	results = find_all_boolean(query, main_path, indexindex)
-	ranking = []
-
-	if results:
-		for docid, value in sorted(results.items(), key=lambda x: -x[1]):
-			# print(docid)
-			ranking.append(url_index[str(docid)])
-
-	else:
-		print("fuck you")"""
+	urlindex = get_url_index()
+	threshold_index = get_threshold_index()
+	urlrank = get_url_ranking()
+	query = input()
+	start = time.time()
+	get_results(query, indexindex, urlindex, threshold_index, urlrank)
+	end = time.time()
+	print("time", end-start)
