@@ -63,7 +63,7 @@ heap = []
 heapq.heapify(heap)
 front, end = (0, 300)
 
-query = input().split()
+query = query_processor(input()).split()
 
 start = time.time()
 for token in query:
