@@ -52,6 +52,7 @@ def find_all_boolean(q, index_path, index_index, threshold, urlrank, urlindex):
 	cap = 300
 	if restrict > 3:
 		cap = 100
+	restrict = 3
 
 	if len(query) == 1:
 		token = query[0]

@@ -31,7 +31,7 @@ def sum_score(query, id, words, urlrank, urlindex, seen):
 				#check if the url for this doc has the token in it
 				if token in urlindex[str(id)].lower():
 					#print("TOKEN IN URL", urlindex[str(id)])
-					url_sum = url_sum * 1.5
+					url_sum = url_sum * 1.1
 				if seen[id] == len(query):
 					boolean_sum = boolean_sum * 1000
 				# find the vectors for document and token
@@ -45,6 +45,19 @@ def sum_score(query, id, words, urlrank, urlindex, seen):
 
 	
 	return page_score * url_sum * importance_sum * boolean_sum * (score_sum / math.sqrt(token_length * score_length))
+
+def query_processing(s):
+	stop_words = {'been', 'ours', "they're", 'when', 'into', '}', 'each', 'having', 'very', 'himself', 'between', 'they', 'this', "won't", '{', 'it', ',', "here's", 'not', "she's", 'am', "let's", 'other', 'under', "he'd", 'both', '^', 'if', 'he', 'themselves', '*', 'an', 'why', '!', "what's", 'but', 'doing', 'because', ';', 'of', "you'll", "there's", "it's", 'these', '/', 'for', "shouldn't", 'above', 'did', 'had', "isn't", 'she', 'through', "who's", "wouldn't", 'no', "you're", '-', 'down', 'a', "he'll", 'him', 'ought', "he's", '$', 'their', '||', 'on', 'as', "why's", '~', 'herself', 'than', 'his', "shan't", "she'll", 'hers', 'who', 'does', 'what', "when's", '<', '|', "haven't", 'yourselves', "you'd", '_', 'during', 'over', 'has', 'i', "where's", 'would', 'your', 'that', "didn't", '.', 'further', 'you', "you've", 'are', 'about', 'and', 'few', 'in', 'which', '"', '[', 'own', "they'd", 'its', 'while', 'or', 'ourselves', '@', "i've", 'most', "that's", 'below', 'do', '=', "can't", 'should', 'some', 'to', 'once', "aren't", ')', 'all', "she'd", 'more', 'we', 'where', ':', "wasn't", 'cannot', '\\', 'our', 'could', 'up', "we're", 'by', 'against', 'her', 'them', "we've", "couldn't", '#', 'any', "i'd", 'then', 'too', 'were', 'after', 'my', "weren't", 'until', 'whom', 'from', 'nor', "we'd", '`', 'itself', "i'm", 'so', "they've", "don't", "hasn't", 'same', '+', "i'll", 'have', '%', '?', 'is', 'myself', "doesn't", 'off', 'again', 'theirs', 'yourself', 'here', 'the', 'was', 'those', 'yours', 'such', 'at', "hadn't", "we'll", ']', 'only', 'being', "how's", 'me', 'out', '>', "mustn't", 'before', 'be', "they'll", 'with', '&', '(', 'how', 'there'}
+	restrict = 1000
+	new_query = []
+	old_query = s.split()
+	for word in old_query:
+		if word not in stop_words:
+			new_query.append(word)
+	if len(new_query) == 0:
+		return old_query
+	else:
+		return new_query
 
 
 indexindex = dict()
@@ -61,9 +74,9 @@ words = dict()
 used = set()
 heap = []
 heapq.heapify(heap)
-front, end = (0, 300)
+front, end = (0, 1000)
 
-query = query_processor(input()).split()
+query = query_processing(query_processor(input()))
 
 start = time.time()
 for token in query:
@@ -78,15 +91,16 @@ for token in query:
 		score = sum_score(query, post["docID"], words, urlrank, urlindex, seen)
 		heapq.heappush(heap, (-score, post["docID"]))
 
-print(list(heap)[:20])
 
-for i in range(20):
+for i in range(21):
 	node = heapq.heappop(heap)
 	if node and node[1] not in used:
+		print(node)
 		results.append(urlindex[str(node[1])])
 		used.add(node[1])
 
 print(results)
+print(seen)
 
 end = time.time()
 
