@@ -49,12 +49,12 @@ def anchorExtractor(Documents):
                 for link in soup.findAll('a', attrs={'href': re.compile("^http")}):
                     link_url = link.get('href')
                     if link_url in url_set:
-                        if len(link.text) > 3:
+                        if len(link.text) >= 3:
                             if anchor_dict.get(link_url, None) == None:
-                                a = set()
+                                a = list()
                             else:
                                 a = anchor_dict.get(link_url)
-                            a.add(link.text)
+                            a.append(link.text)
                             anchor_dict[link_url] = a
     file_name = os.path.join(directory, "anchors.json")
     with open(file_name, 'w') as url_file:
@@ -81,5 +81,5 @@ def anchorExtractor(Documents):
 
 if __name__ == "__main__":
     file_location = "DEV"
-    # anchorExtractor(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
-    createGraph(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+    anchorExtractor(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+    #createGraph(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))

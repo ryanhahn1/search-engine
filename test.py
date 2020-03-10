@@ -18,7 +18,7 @@ def sum_score(query, id, words, urlrank, urlindex, seen):
 
 	#set page rank score
 	if str(id) in urlrank:
-		page_score = (1 + urlrank[str(id)] * 1000)
+		page_score = (1 + urlrank[str(id)] * 10000)
 	
 	
 	for token in query:
@@ -46,18 +46,21 @@ def sum_score(query, id, words, urlrank, urlindex, seen):
 	
 	return page_score * url_sum * importance_sum * boolean_sum * (score_sum / math.sqrt(token_length * score_length))
 
-def query_processing(s):
+def query_processing(s, threshold):
 	stop_words = {'been', 'ours', "they're", 'when', 'into', '}', 'each', 'having', 'very', 'himself', 'between', 'they', 'this', "won't", '{', 'it', ',', "here's", 'not', "she's", 'am', "let's", 'other', 'under', "he'd", 'both', '^', 'if', 'he', 'themselves', '*', 'an', 'why', '!', "what's", 'but', 'doing', 'because', ';', 'of', "you'll", "there's", "it's", 'these', '/', 'for', "shouldn't", 'above', 'did', 'had', "isn't", 'she', 'through', "who's", "wouldn't", 'no', "you're", '-', 'down', 'a', "he'll", 'him', 'ought', "he's", '$', 'their', '||', 'on', 'as', "why's", '~', 'herself', 'than', 'his', "shan't", "she'll", 'hers', 'who', 'does', 'what', "when's", '<', '|', "haven't", 'yourselves', "you'd", '_', 'during', 'over', 'has', 'i', "where's", 'would', 'your', 'that', "didn't", '.', 'further', 'you', "you've", 'are', 'about', 'and', 'few', 'in', 'which', '"', '[', 'own', "they'd", 'its', 'while', 'or', 'ourselves', '@', "i've", 'most', "that's", 'below', 'do', '=', "can't", 'should', 'some', 'to', 'once', "aren't", ')', 'all', "she'd", 'more', 'we', 'where', ':', "wasn't", 'cannot', '\\', 'our', 'could', 'up', "we're", 'by', 'against', 'her', 'them', "we've", "couldn't", '#', 'any', "i'd", 'then', 'too', 'were', 'after', 'my', "weren't", 'until', 'whom', 'from', 'nor', "we'd", '`', 'itself', "i'm", 'so', "they've", "don't", "hasn't", 'same', '+', "i'll", 'have', '%', '?', 'is', 'myself', "doesn't", 'off', 'again', 'theirs', 'yourself', 'here', 'the', 'was', 'those', 'yours', 'such', 'at', "hadn't", "we'll", ']', 'only', 'being', "how's", 'me', 'out', '>', "mustn't", 'before', 'be', "they'll", 'with', '&', '(', 'how', 'there'}
 	restrict = 1000
 	new_query = []
 	old_query = s.split()
 	for word in old_query:
 		if word not in stop_words:
+			if word in threshold:
+				restrict = min(restrict, math.floor(math.log10(threshold[word])))
 			new_query.append(word)
+	print(restrict)
 	if len(new_query) == 0:
-		return old_query
+		return (old_query, restrict)
 	else:
-		return new_query
+		return (new_query, restrict)
 
 
 # indexindex = dict()
