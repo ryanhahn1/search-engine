@@ -12,60 +12,93 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'aab774a98e91dbc255f8ac641798d3de'
 
+
+class Searcher:
+	def __init__(self, q):
+		self.old_query = q
+		self.heap = []
+		self.results = []
+		self.words = dict() # key = token, value = list of postings, postings = dictionary
+		self.seen = dict() # key = docID, value = number of times seen
+		self.used = set() # ids
+		self.front = 0
+		self.end = 299
+		heapq.heapify(self.heap)
+
+	def add_more(self, query, main_path, indexindex, urlrank, urlindex):
+		# for each word, retrieve the postings, score each, and add to heap
+		for token in query:
+				postings = find_postings(token, main_path, indexindex)
+				if postings:
+					postings = postings[self.front:self.end]
+				self.words[token] = postings
+
+				if postings:
+					for post in postings:
+						if post["docID"] not in self.seen:
+							self.seen[post["docID"]] = 1
+						else:
+							self.seen[post["docID"]] += 1
+						score = sum_score(query, post["docID"], self.words, urlrank, urlindex, self.seen)
+						heapq.heappush(self.heap, (-score, post["docID"]))
+		self.front += 300
+		self.end += 300
+	
+	def top(self, urlindex):
+		self.results.append("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+		count = 0
+		if len(self.heap) != 0:
+			while len(self.heap) != 0 and count <= 20:
+				node = heapq.heappop(self.heap)
+				if node and node[1] not in self.used:
+					self.results.append(urlindex[str(node[1])])
+					self.used.add(node[1])
+					count += 1
+		else:
+			self.results += ["No Results Found"]
+		return self.results
+
+
+
 indexindex = get_index_index()
 urlindex = get_url_index()
 threshold_index = get_threshold_index()
 urlrank = get_url_ranking()
 main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
+print("justine is a goblin")
+searcher = Searcher("")
+
+
+
 
 @app.route('/', methods =['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def home():
+	
 	search = Search()
-	results = []
 	time_passed = 0
+	results = []
+	print(main_path)
+	global searcher
+
 	if search.validate_on_submit():
 		start = time.time()
-		used = set()
-		heap = []
-		words = dict()
-		seen = dict()
-		heapq.heapify(heap)
-		front, end = (0, 1000)
 		query = query_processing(query_processor(search.query.data))
+		# DISPLAY MORE
+		if search.query.data == searcher.old_query:
+			searcher.add_more(query, main_path, indexindex, urlrank, urlindex)
+			results = searcher.top(urlindex)
 
-		for token in query:
-			postings = find_postings(token, main_path, indexindex)
-			if postings:
-				postings = postings[front:end]
-			words[token] = postings
-
-
-			if postings:
-				for post in postings:
-					if post["docID"] not in seen:
-						seen[post["docID"]] = 1
-					else:
-						seen[post["docID"]] += 1
-					score = sum_score(query, post["docID"], words, urlrank, urlindex, seen)
-					heapq.heappush(heap, (-score, post["docID"]))
-
-		count = 0
-		if len(heap) != 0:
-			while len(heap) != 0 and count <= 20:
-				node = heapq.heappop(heap)
-				if node and node[1] not in used:
-					results.append(urlindex[str(node[1])])
-					used.add(node[1])
-				count += 1
+		# NEW QUERY
 		else:
-			results = ["No Results Found"]
+			searcher = Searcher(search.query.data)
+			searcher.add_more(query, main_path, indexindex, urlrank, urlindex)
+			results = searcher.top(urlindex)
+
 		time_passed = time.time() - start
-		
+		time_passed = float(str(time_passed)[0:6])
 	return render_template('home.html', title = 'Home', search = search, results = results, time_passed = time_passed)
 
 
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
+	app.run(debug=True)
