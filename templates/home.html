@@ -15,12 +15,12 @@
             </div>
         </form>
     </div>
+    <div>
+        time_passed: {{time_passed}} seconds
+    </div>
     {% for url in results %}
     <div>
         <a href={{url}} target="_blank">{{url}}</a>
     </div>
     {% endfor %}
-    <div>
-    {{search.load(class="btn btn-outline-info")}}
-    </div>
 {% endblock content %}

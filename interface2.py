@@ -23,8 +23,9 @@ main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 def home():
 	search = Search()
 	results = []
+	time_passed = 0
 	if search.validate_on_submit():
-		
+		start = time.time()
 		used = set()
 		heap = []
 		words = dict()
@@ -59,8 +60,9 @@ def home():
 				count += 1
 		else:
 			results = ["No Results Found"]
+		time_passed = time.time() - start
 		
-	return render_template('home.html', title = 'Home', search = search, results = results)
+	return render_template('home.html', title = 'Home', search = search, results = results, time_passed = time_passed)
 
 
 

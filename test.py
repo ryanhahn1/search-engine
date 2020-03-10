@@ -60,51 +60,51 @@ def query_processing(s):
 		return new_query
 
 
-indexindex = dict()
-alpha_path = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
-with open(alpha_path) as alpha:
-	indexindex = json.load(alpha)
-main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
-urlindex = get_url_index()
-urlrank = get_url_ranking()
+# indexindex = dict()
+# alpha_path = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
+# with open(alpha_path) as alpha:
+# 	indexindex = json.load(alpha)
+# main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
+# urlindex = get_url_index()
+# urlrank = get_url_ranking()
 
-results = []
-seen = dict()
-words = dict()
-used = set()
-heap = []
-heapq.heapify(heap)
-front, end = (0, 1000)
+# results = []
+# seen = dict()
+# words = dict()
+# used = set()
+# heap = []
+# heapq.heapify(heap)
+# front, end = (0, 1000)
 
-query = query_processing(query_processor(input()))
+# query = query_processing(query_processor(input()))
 
-start = time.time()
-for token in query:
-	postings = find_postings(token, main_path, indexindex)[front:end]
-	words[token] = postings
+# start = time.time()
+# for token in query:
+# 	postings = find_postings(token, main_path, indexindex)[front:end]
+# 	words[token] = postings
 
-	for post in postings:
-		if post["docID"] not in seen:
-			seen[post["docID"]] = 1
-		else:
-			seen[post["docID"]] += 1
-		score = sum_score(query, post["docID"], words, urlrank, urlindex, seen)
-		heapq.heappush(heap, (-score, post["docID"]))
-
-
-for i in range(21):
-	node = heapq.heappop(heap)
-	if node and node[1] not in used:
-		print(node)
-		results.append(urlindex[str(node[1])])
-		used.add(node[1])
-
-print(results)
-print(seen)
-
-end = time.time()
+# 	for post in postings:
+# 		if post["docID"] not in seen:
+# 			seen[post["docID"]] = 1
+# 		else:
+# 			seen[post["docID"]] += 1
+# 		score = sum_score(query, post["docID"], words, urlrank, urlindex, seen)
+# 		heapq.heappush(heap, (-score, post["docID"]))
 
 
-print(end - start)
+# for i in range(21):
+# 	node = heapq.heappop(heap)
+# 	if node and node[1] not in used:
+# 		print(node)
+# 		results.append(urlindex[str(node[1])])
+# 		used.add(node[1])
+
+# print(results)
+# print(seen)
+
+# end = time.time()
+
+
+# print(end - start)
 
 
