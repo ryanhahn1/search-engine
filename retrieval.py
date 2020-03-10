@@ -2,6 +2,12 @@ import os
 import json
 import math
 
+def get_anchor():
+	anchor_path = os.path.dirname(os.getcwd()) + "/index/anchor.json"
+	with open(anchor_path) as anchor:
+		result = json.load(anchor)
+	return result
+
 def get_index_index():
 	alpha_path = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
 	with open(alpha_path) as alpha:

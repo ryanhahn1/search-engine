@@ -2,7 +2,7 @@ from flask import Flask, render_template, escape, request, url_for, redirect
 from search import Search
 from textprocessing import query_processor
 from test import sum_score, query_processing
-from retrieval import get_index_index, get_url_index, get_threshold_index, get_url_ranking, find_postings
+from retrieval import get_index_index, get_url_index, get_threshold_index, get_url_ranking, find_postings, get_anchor
 import heapq
 import os
 
@@ -26,7 +26,7 @@ class Searcher:
 		self.end = self.threshold
 		heapq.heapify(self.heap)
 
-	def add_more(self, query, main_path, indexindex, urlrank, urlindex):
+	def add_more(self, query, main_path, indexindex, urlrank, urlindex, anchor):
 		# for each word, retrieve the postings, score each, and add to heap
 		print(self.threshold)
 		for token in query:
@@ -41,7 +41,7 @@ class Searcher:
 							self.seen[post["docID"]] = 1
 						else:
 							self.seen[post["docID"]] += 1
-						score = sum_score(query, post["docID"], self.words, urlrank, urlindex, self.seen)
+						score = sum_score(query, post["docID"], self.words, urlrank, urlindex, self.seen, anchor)
 						heapq.heappush(self.heap, (-score, post["docID"]))
 		self.front += self.threshold
 		self.end += self.threshold
@@ -70,6 +70,7 @@ indexindex = get_index_index()
 urlindex = get_url_index()
 threshold_index = get_threshold_index()
 urlrank = get_url_ranking()
+anchor = get_anchor()
 main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 searcher = Searcher("")
 
@@ -92,7 +93,7 @@ def home():
 		# DISPLAY MORE
 		
 		if search.query.data == searcher.old_query:
-			searcher.add_more(query, main_path, indexindex, urlrank, urlindex)
+			searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
 			results = searcher.top(urlindex)
 
 		# NEW QUERY
@@ -100,7 +101,7 @@ def home():
 			searcher = Searcher(search.query.data)
 			if restrict > 3:
 				searcher.change_threshold(100)
-			searcher.add_more(query, main_path, indexindex, urlrank, urlindex)
+			searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
 			results = searcher.top(urlindex)
 
 		time_passed = time.time() - start
