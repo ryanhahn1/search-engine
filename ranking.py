@@ -5,6 +5,7 @@ from scanner import get_files
 import re
 import json
 import os
+import krovetz
 
 def createGraph(Documents):
     directory = os.path.dirname(os.getcwd()) + "/index/"
@@ -61,6 +62,46 @@ def anchorExtractor(Documents):
         json.dump(anchor_dict, url_file)
     print("anchors found") 
 
+def update_anchor():
+    alpha_path = os.path.dirname(os.getcwd()) + "/index/anchors.json"
+    updated_anchor = dict()
+    with open(alpha_path) as alpha:
+        anchors = json.load(alpha)
+    for key, value in anchors.items():
+        newvalue = set(value)
+        newvalue.discard("home") 
+        newvalue.discard("\\u00bb")
+        newvalue.discard("\\u00ab")
+        right = list()
+        for phrase in list(newvalue):
+            right += phrase.split()
+        updated_anchor[key] = right
+    directory = os.path.dirname(os.getcwd()) + "/index/"
+    file_name = os.path.join(directory, "updated_anchor.json")
+    with open(file_name, 'w') as url_file:
+        json.dump(updated_anchor, url_file)
+    print("updated anchors")
+
+def update_update_anchor():
+    alpha_path = os.path.dirname(os.getcwd()) + "/index/updated_anchor.json"
+    ks = krovetz.PyKrovetzStemmer()
+    updated_anchor = dict()
+    with open(alpha_path, encoding='utf-8', errors='ignore') as alpha:
+        anchors = json.load(alpha)
+    for key, value in anchors.items():
+        right = set()
+        for phrase in value:
+            try:
+                right.add(ks.stem(phrase))
+            except:
+                pass
+        updated_anchor[key] = list(right)
+    directory = os.path.dirname(os.getcwd()) + "/index/"
+    file_name = os.path.join(directory, "optimal_anchor.json")
+    with open(file_name, 'w') as url_file:
+        json.dump(updated_anchor, url_file)
+    print("updated anchors")
+
 # def update_pagerank(path):
 # 	print("updating pagerank scores")
 # 	new_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
@@ -81,5 +122,7 @@ def anchorExtractor(Documents):
 
 if __name__ == "__main__":
     file_location = "DEV"
-    anchorExtractor(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+    # update_anchor()
+    update_update_anchor()
+    # anchorExtractor(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
     #createGraph(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
