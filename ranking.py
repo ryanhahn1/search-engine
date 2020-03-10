@@ -20,7 +20,7 @@ def createGraph(Documents):
             if ".DS_Store" not in doc:
                 data = json.load(json_file)
                 soup = BeautifulSoup(data['content'], 'html.parser')
-                for link in soup.findAll('a', attrs={'href': re.compile("^http://")}):
+                for link in soup.findAll('a', attrs={'href': re.compile("^http")}):
                     if link.get('href') in url_set:
                         G.add_edge(n, int(url_link_dict.get(link.get('href'))))
                     else:
@@ -31,6 +31,35 @@ def createGraph(Documents):
     with open(file_name, 'w') as url_file:
         json.dump(pr, url_file)
     print("ranking finished")
+
+def anchorExtractor(Documents):
+    directory = os.path.dirname(os.getcwd()) + "/index/"
+    url_links = get_url_index()
+    url_link_dict = {y:x for x,y in url_links.items()} #dict where keys are url's and values are ints
+    url_set = set(url_link_dict.keys()) #set of relevant url's in corpus
+    n = 0
+    anchor_dict = dict()
+    for doc in Documents:
+        n+=1
+        print(n)
+        with open(doc, encoding='utf-8', errors='replace') as json_file:
+            if ".DS_Store" not in doc:
+                data = json.load(json_file)
+                soup = BeautifulSoup(data['content'], 'html.parser')
+                for link in soup.findAll('a', attrs={'href': re.compile("^http")}):
+                    link_url = link.get('href')
+                    if link_url in url_set:
+                        if len(link.text) > 3:
+                            if anchor_dict.get(link_url, None) == None:
+                                a = set()
+                            else:
+                                a = anchor_dict.get(link_url)
+                            a.add(link.text)
+                            anchor_dict[link_url] = a
+    file_name = os.path.join(directory, "anchors.json")
+    with open(file_name, 'w') as url_file:
+        json.dump(anchor_dict, url_file)
+    print("anchors found") 
 
 # def update_pagerank(path):
 # 	print("updating pagerank scores")
@@ -52,4 +81,5 @@ def createGraph(Documents):
 
 if __name__ == "__main__":
     file_location = "DEV"
+    # anchorExtractor(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
     createGraph(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
