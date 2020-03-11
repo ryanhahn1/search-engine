@@ -21,9 +21,10 @@ class Searcher:
 		self.words = dict() # key = token, value = list of postings, postings = dictionary
 		self.seen = dict() # key = docID, value = number of times seen
 		self.used = set() # ids
-		self.threshold = 0
 		self.front = 0
-		self.end = 1000
+		self.end = 499
+		self.threshold = 500
+		self.page_count = 1
 		heapq.heapify(self.heap)
 
 	def add_more(self, query, main_path, indexindex, urlrank, urlindex, anchor):
@@ -43,11 +44,11 @@ class Searcher:
 							self.seen[post["docID"]] += 1
 						score = sum_score(query, post["docID"], self.words, urlrank, urlindex, self.seen, anchor)
 						heapq.heappush(self.heap, (-score, post["docID"]))
-		self.front += 300
-		self.end += 300
+		self.front += self.threshold
+		self.end += self.threshold
 	
 	def top(self, urlindex):
-		self.results.append("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
+		self.results.append("/////////////////////////////////////////////////////////////////////////////////////////" + " Page " + str(self.page_count) + " /////////////////////////////////////////////////////////////////////////////////////////")
 		count = 0
 		if len(self.heap) != 0:
 			while len(self.heap) != 0 and count <= 20:
@@ -62,6 +63,7 @@ class Searcher:
 
 	def change_threshold(self, threshold):
 		print("fcu")
+		self.end = threshold - 1
 		self.threshold = threshold
 
 
@@ -88,12 +90,16 @@ def home():
 	global searcher
 
 	if search.validate_on_submit():
-		start = time.time()
+		start, end = 0, 0
+		
 		query, restrict = query_processing(query_processor(search.query.data), threshold_index)
 		# DISPLAY MORE
 		
 		if search.query.data == searcher.old_query:
+			start = time.time()
 			searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
+			end = time.time()
+			searcher.page_count += 1
 			results = searcher.top(urlindex)
 
 		# NEW QUERY
@@ -101,10 +107,13 @@ def home():
 			searcher = Searcher(search.query.data)
 			if restrict > 3:
 				searcher.change_threshold(100)
+				print(searcher.threshold)
+			start = time.time()
 			searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
+			end = time.time()
 			results = searcher.top(urlindex)
 
-		time_passed = time.time() - start
+		time_passed = end - start
 		time_passed = float(str(time_passed)[0:6])
 
 	return render_template('home.html', title = 'Home', search = search, results = results, time_passed = time_passed)
