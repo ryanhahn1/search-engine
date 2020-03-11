@@ -3,7 +3,7 @@ import json
 import os
 import heapq
 import math
-from retrieval import find_postings, get_url_index, get_url_ranking
+from retrieval import find_postings, get_url_index, get_url_ranking, get_threshold_index, get_anchor
 from textprocessing import query_processor
 
 
@@ -27,16 +27,16 @@ def sum_score(query, id, words, urlrank, urlindex, seen, anchor):
 			if len(p) >= 1:
 				#IMPORTANT
 				if p[0]["importance"]:
-					importance_sum = importance_sum * 1.1
+					importance_sum = importance_sum * 3
 				#ANCHOR TEXT
 				if str(id) in anchor and token in anchor[str(id)]:
-					print("ANCHOR", token, urlindex[str(id)].lower())
+					#print("ANCHOR", token, urlindex[str(id)].lower())
 					anchor_score = 1.5
 				#URL
 				if token in urlindex[str(id)].lower():
 					url_sum = url_sum * 1.1
 				if seen[id] == len(query):
-					boolean_sum = boolean_sum * 1000
+					boolean_sum = 100
 				# COSINE
 				doc_score = p[0]["score"]
 				token_score = query.count(token) * (55393 / len(words[token]))
@@ -64,52 +64,55 @@ def query_processing(s, threshold):
 	else:
 		return (new_query, restrict)
 
+if __name__ == '__main__':
+	indexindex = dict()
+	alpha_path = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
+	with open(alpha_path) as alpha:
+		indexindex = json.load(alpha)
+	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
+	urlindex = get_url_index()
+	urlrank = get_url_ranking()
+	threshold_index = get_threshold_index()
+	anchor_index = get_anchor()
 
-# indexindex = dict()
-# alpha_path = os.path.dirname(os.getcwd()) + "/index/alphabet.json"
-# with open(alpha_path) as alpha:
-# 	indexindex = json.load(alpha)
-# main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
-# urlindex = get_url_index()
-# urlrank = get_url_ranking()
+	results = []
+	seen = dict()
+	words = dict()
+	used = set()
+	heap = []
+	heapq.heapify(heap)
+	front, end = (0, 1000)
 
-# results = []
-# seen = dict()
-# words = dict()
-# used = set()
-# heap = []
-# heapq.heapify(heap)
-# front, end = (0, 1000)
+	query, restrict = query_processing(query_processor(input()), threshold_index)
 
-# query = query_processing(query_processor(input()))
+	start = time.time()
+	for token in query:
+		postings = find_postings(token, main_path, indexindex)[front:end]
+		words[token] = postings
 
-# start = time.time()
-# for token in query:
-# 	postings = find_postings(token, main_path, indexindex)[front:end]
-# 	words[token] = postings
-
-# 	for post in postings:
-# 		if post["docID"] not in seen:
-# 			seen[post["docID"]] = 1
-# 		else:
-# 			seen[post["docID"]] += 1
-# 		score = sum_score(query, post["docID"], words, urlrank, urlindex, seen)
-# 		heapq.heappush(heap, (-score, post["docID"]))
-
-
-# for i in range(21):
-# 	node = heapq.heappop(heap)
-# 	if node and node[1] not in used:
-# 		print(node)
-# 		results.append(urlindex[str(node[1])])
-# 		used.add(node[1])
-
-# print(results)
-# print(seen)
-
-# end = time.time()
+		for post in postings:
+			if post["docID"] not in seen:
+				seen[post["docID"]] = 1
+			else:
+				seen[post["docID"]] += 1
+			score = sum_score(query, post["docID"], words, urlrank, urlindex, seen, anchor_index)
+			heapq.heappush(heap, (-score, post["docID"]))
+			if post["docID"] == 53563:
+				print(score)
 
 
-# print(end - start)
+	for i in range(21):
+		node = heapq.heappop(heap)
+		if node and node[1] not in used:
+			print(node)
+			results.append(urlindex[str(node[1])])
+			used.add(node[1])
+
+	print(results)
+
+	end = time.time()
+
+
+	print(end - start)
 
 

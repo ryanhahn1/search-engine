@@ -21,9 +21,9 @@ class Searcher:
 		self.words = dict() # key = token, value = list of postings, postings = dictionary
 		self.seen = dict() # key = docID, value = number of times seen
 		self.used = set() # ids
-		self.threshold = 300
+		self.threshold = 0
 		self.front = 0
-		self.end = self.threshold
+		self.end = 1000
 		heapq.heapify(self.heap)
 
 	def add_more(self, query, main_path, indexindex, urlrank, urlindex, anchor):
@@ -43,8 +43,8 @@ class Searcher:
 							self.seen[post["docID"]] += 1
 						score = sum_score(query, post["docID"], self.words, urlrank, urlindex, self.seen, anchor)
 						heapq.heappush(self.heap, (-score, post["docID"]))
-		self.front += self.threshold
-		self.end += self.threshold
+		self.front += 300
+		self.end += 300
 	
 	def top(self, urlindex):
 		self.results.append("//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////")
