@@ -1,8 +1,7 @@
 from flask import Flask, render_template, escape, request, url_for, redirect
 from search import Search
 from textprocessing import query_processor
-from test import sum_score, query_processing
-from retrieval import get_index_index, get_url_index, get_threshold_index, get_url_ranking, find_postings, get_anchor
+from retrieval import sum_score, query_processing, get_index_index, get_url_index, get_threshold_index, get_url_ranking, find_postings, get_anchor
 import heapq
 import os
 
@@ -12,7 +11,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'aab774a98e91dbc255f8ac641798d3de'
 
-
+# class used to store retrieval state for search engine operation
 class Searcher:
 	def __init__(self, q, ):
 		self.old_query = q
@@ -21,21 +20,22 @@ class Searcher:
 		self.words = dict() # key = token, value = list of postings, postings = dictionary
 		self.seen = dict() # key = docID, value = number of times seen
 		self.used = set() # ids
-		self.front = 0
-		self.end = 499
-		self.threshold = 500
-		self.page_count = 1
+		self.front = 0 # where to start adding postings
+		self.end = 499 # where to end adding postings
+		self.threshold = 500 # number of postings to add
+		self.page_count = 1 # which batch is going to be displayed
 		heapq.heapify(self.heap)
 
+	# add the next batch of documents to the heap
 	def add_more(self, query, main_path, indexindex, urlrank, urlindex, anchor):
 		# for each word, retrieve the postings, score each, and add to heap
-		print(self.threshold)
 		for token in query:
+				# retrieve postings
 				postings = find_postings(token, main_path, indexindex)
 				if postings:
 					postings = postings[self.front:self.end]
 				self.words[token] = postings
-
+				# score postings and add to heap
 				if postings:
 					for post in postings:
 						if post["docID"] not in self.seen:
@@ -44,11 +44,13 @@ class Searcher:
 							self.seen[post["docID"]] += 1
 						score = sum_score(query, post["docID"], self.words, urlrank, urlindex, self.seen, anchor)
 						heapq.heappush(self.heap, (-score, post["docID"]))
+		# increment the bounds for the next retrieval request
 		self.front += self.threshold
 		self.end += self.threshold
 	
+	# return the top set of documents from the heap
 	def top(self, urlindex):
-		self.results.append("/////////////////////////////////////////////////////////////////////////////////////////" + " Page " + str(self.page_count) + " /////////////////////////////////////////////////////////////////////////////////////////")
+		self.results.append("///////////////////////////////////////////////////////////////////////////////" + " Page " + str(self.page_count) + " ///////////////////////////////////////////////////////////////////////////////")
 		count = 0
 		if len(self.heap) != 0:
 			while len(self.heap) != 0 and count <= 20:
@@ -61,13 +63,13 @@ class Searcher:
 			self.results += ["No Results Found"]
 		return self.results
 
+	# change the number of documents to 
 	def change_threshold(self, threshold):
-		print("fcu")
 		self.end = threshold - 1
 		self.threshold = threshold
 
 
-
+# load necessary files into memory
 indexindex = get_index_index()
 urlindex = get_url_index()
 threshold_index = get_threshold_index()
@@ -82,26 +84,23 @@ searcher = Searcher("")
 @app.route('/', methods =['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def home():
-	
 	search = Search()
 	time_passed = 0
 	results = []
 	print(main_path)
 	global searcher
 
+
 	if search.validate_on_submit():
 		start, end = 0, 0
-		
 		query, restrict = query_processing(query_processor(search.query.data), threshold_index)
 		# DISPLAY MORE
-		
 		if search.query.data == searcher.old_query:
 			start = time.time()
 			searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
 			end = time.time()
 			searcher.page_count += 1
 			results = searcher.top(urlindex)
-
 		# NEW QUERY
 		else:
 			searcher = Searcher(search.query.data)

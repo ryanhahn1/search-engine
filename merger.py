@@ -4,6 +4,7 @@ import os
 import json
 import shutil as shu
 
+# compare 2 files and rewrite the first file with 
 def merge(file_1, file_2):
 	word_total = 0
 	with open(file_1, "r+", encoding='utf-8', errors='replace') as file1:
@@ -14,17 +15,12 @@ def merge(file_1, file_2):
 			line1 = next(iter1, None)
 			line2 = next(iter2, None)
 			while True:
-				
+				# compare the current lines between both files
 				if line1 and line2:
 					word1, list1str = line1.split(" ", 1)
 					word2, list2str = line2.split(" ", 1)
-					#print(word1, word2)
 					list1 = json.loads(list1str)
 					list2 = json.loads(list2str)
-					#print(word2)
-					#print(line1.split(" ", 1)[1])
-					#list1 = json.loads(line1.split(" ", 1)[1])
-					#list2 = json.loads(line2.split(" ", 1)[1])
 					# merge these two lines and then add 
 					if word1 == word2:
 						listmerge = list1 + list2
@@ -41,22 +37,25 @@ def merge(file_1, file_2):
 						word_total += 1
 						output += word1 + " " + json.dumps(list1) + "\n"
 						line1 = next(iter1, None)
+				# end of both files
 				elif line1 == None and line2 == None:
 					break
+				# end of file 1, add the rest of file 2
 				elif line1 == None:
 					output += line2
 					line2 = next(iter2, None)
 					word_total += 1
+				# end of file 2, add the rest of file 1
 				elif line2 == None:
 					output += line1
 					line1 = next(iter1, None)
 					word_total += 1
+			# write the new document to the first file
 			file1.seek(0)
 			file1.write(output)
 			file1.truncate()
-	print(get_word_count())
 
-
+# perform the merge operation on all batch files created during index
 def multimerge(file_list):
 	main_path = os.path.dirname(os.getcwd()) + "/index/not_main.txt"
 	open(main_path, "w")
@@ -67,6 +66,7 @@ def multimerge(file_list):
 			merge(main_path, file_list[current])
 		current += 1
 
+# scans the index and returns the number of tokens
 def get_word_count():
 	with open(os.path.dirname(os.getcwd()) + "/index/not_main.txt") as main:
 		count = 1

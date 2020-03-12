@@ -23,8 +23,6 @@ def get_results(input, index_index, url_index, threshold_index, urlrank):
 
 
 if __name__ == '__main__':
-	
-	
 	indexindex = get_index_index()
 	urlindex = get_url_index()
 	threshold_index = get_threshold_index()

@@ -1,5 +1,6 @@
 import math
 
+# helper function to create a posting dictionary
 def create_posting(docid, frequency, important, wordcount):
     post = dict()
     post["docID"] = docid

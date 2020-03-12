@@ -3,13 +3,7 @@ import re
 from bs4 import BeautifulSoup
 import krovetz
 
-
-
-#things we need:
-# frequency of each word
-# total number of terms
-# important words vs normal
-# 
+# find the full string of tokens in a document except JavaScript/HTML tags
 def extract_text(json_data):
     try:
          if json_data:
@@ -31,7 +25,7 @@ def extract_text(json_data):
     except Exception as e:
         print(e)
 
-# <strong> tags as important? Or only <bold>, <h1>, <h2>, <h3>, and <title>
+# find the full string of tokens in <bold>, <h1>, <h2>, <h3>, and <title> tags
 def extract_important(json_data):
     try:
          if json_data:
@@ -55,7 +49,7 @@ def extract_important(json_data):
     except Exception as e:
         print(e)
 
-    
+# finds and stems a document string and returns a dictionary of tokens
 def tokenizer(token) -> dict:
     ks = krovetz.PyKrovetzStemmer()
     frequency = dict()
@@ -65,6 +59,7 @@ def tokenizer(token) -> dict:
         frequency[stemmed] = count + 1
     return frequency #returns dictionary of terms: count
 
+# tokenizes a user query
 def query_processor(s):
     query = re.sub('[^a-z0-9]', ' ', s.lower()).split()
     new_query = ""
