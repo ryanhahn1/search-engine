@@ -21,8 +21,8 @@ class Searcher:
 		self.seen = dict() # key = docID, value = number of times seen
 		self.used = set() # ids
 		self.front = 0 # where to start adding postings
-		self.end = 499 # where to end adding postings
-		self.threshold = 500 # number of postings to add
+		self.end = 299 # where to end adding postings
+		self.threshold = 300 # number of postings to add
 		self.page_count = 1 # which batch is going to be displayed
 		heapq.heapify(self.heap)
 
@@ -77,6 +77,7 @@ urlrank = get_url_ranking()
 anchor = get_anchor()
 main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
 searcher = Searcher("")
+cache = dict() # key = query, value = heap
 
 
 
@@ -87,13 +88,13 @@ def home():
 	search = Search()
 	time_passed = 0
 	results = []
-	print(main_path)
 	global searcher
 
 
 	if search.validate_on_submit():
 		start, end = 0, 0
 		query, restrict = query_processing(query_processor(search.query.data), threshold_index)
+		print(query)
 		# DISPLAY MORE
 		if search.query.data == searcher.old_query:
 			start = time.time()
