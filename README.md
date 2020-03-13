@@ -16,6 +16,9 @@ The following libraries are necessary for this program to run:
 * [Flask](https://palletsprojects.com/p/flask/)
 * [Flask WTF](https://flask-wtf.readthedocs.io/en/stable/)
 * [Simhash](https://leons.im/posts/a-python-implementation-of-simhash-algorithm/)
+* [BeautifulSoup4](https://pypi.org/project/beautifulsoup4/)
+* [Krovetz Stemmer](https://pypi.org/project/krovetz/)
+* [NetworkX](https://networkx.github.io/)
 
 **REQUIREMENTS**
 
