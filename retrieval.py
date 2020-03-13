@@ -101,13 +101,3 @@ def query_processing(s, threshold):
 		return (old_query, restrict)
 	else:
 		return (new_query, restrict)
-
-if __name__ == '__main__':
-	main_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
-	#not_path = os.path.dirname(os.getcwd()) + "/index/0.txt"
-	#indexindex = get_index_index()
-	#threshold_index = get_threshold_index()
-	#urlindex = get_url_index()
-	#get_index_index(main_path)
-	#find_postings("zot", main_path, indexindex)
-	find_all_boolean("machine learning", main_path, indexindex, threshold_index)

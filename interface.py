@@ -4,7 +4,6 @@ from textprocessing import query_processor
 from retrieval import sum_score, query_processing, get_index_index, get_url_index, get_threshold_index, get_url_ranking, find_postings, get_anchor
 import heapq
 import os
-
 import time
 
 app = Flask(__name__)
@@ -34,9 +33,8 @@ class Searcher:
 				postings = find_postings(token, main_path, indexindex)
 				if postings:
 					postings = postings[self.front:self.end]
-				self.words[token] = postings
+					self.words[token] = postings
 				# score postings and add to heap
-				if postings:
 					for post in postings:
 						if post["docID"] not in self.seen:
 							self.seen[post["docID"]] = 1
@@ -63,7 +61,7 @@ class Searcher:
 			self.results += ["No Results Found"]
 		return self.results
 
-	# change the number of documents to 
+	# change the posting index to start from if more results are requested
 	def change_threshold(self, threshold):
 		self.end = threshold - 1
 		self.threshold = threshold
@@ -90,7 +88,7 @@ def home():
 	results = []
 	global searcher
 
-
+	# "ENTER" BUTTON PRESSED
 	if search.validate_on_submit():
 		start, end = 0, 0
 		query, restrict = query_processing(query_processor(search.query.data), threshold_index)
@@ -110,18 +108,13 @@ def home():
 			if search.query.data in cache:
 				start = time.time()
 				searcher.heap = sorted(cache[search.query.data])
-				print(len(searcher.heap))
-				print(searcher.heap[0:10])
 			else:
 				start = time.time()
 				searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
 				cache[search.query.data] = list(searcher.heap)
-				print(len(cache[search.query.data]))
-				print(cache[search.query.data][0:10])
 			end = time.time()
 			results = searcher.top(urlindex)
 
-		print(cache.keys())
 		time_passed = end - start
 		time_passed = float(str(time_passed)[0:6])
 

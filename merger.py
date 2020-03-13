@@ -1,10 +1,9 @@
 from scanner import get_files, get_in_dir
-
 import os
 import json
 import shutil as shu
 
-# compare 2 files and rewrite the first file with 
+# compare 2 files and overwrite the new file with the combined index
 def merge(file_1, file_2):
 	word_total = 0
 	with open(file_1, "r+", encoding='utf-8', errors='replace') as file1:

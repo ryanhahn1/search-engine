@@ -10,15 +10,12 @@ def extract_text(json_data):
             web_content = json_data["content"]
             soup = BeautifulSoup(web_content, "html.parser")
             count = 0
-
+            # remove JS and HTML
             for script in soup(["script", "style"]):
                 script.decompose()
-
             text = soup.get_text()
-
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split(" "))
-            
             text = ' '.join(chunk for chunk in chunks if chunk)
             return text
 
@@ -33,16 +30,14 @@ def extract_important(json_data):
             soup = BeautifulSoup(web_content, "html.parser")
             count = 0
             text = ""
-
+            # remove JS and HTML
             for script in soup(["script", "style"]):
                 script.decompose()
-
+            # whitelist important tags
             for script in soup(["strong", "bold", "h1", "h2", "h3", "title"]):
                 text += script.get_text() + " "
-            
             lines = (line.strip() for line in text.splitlines())
             chunks = (phrase.strip() for line in lines for phrase in line.split(" "))
-            
             text = ' '.join(chunk for chunk in chunks if chunk)
             return text
 

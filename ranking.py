@@ -7,9 +7,9 @@ import json
 import os
 import krovetz
 
-#use networkx library to create a graph with edges as connections between url's
-#use networkx to do pagerank and put values of page rank in a dictionary and 
-#json.dump the dictionary into url_ranking.json
+# use networkx library to create a graph with edges as connections between url's
+# use networkx to do pagerank and put values of page rank in a dictionary and 
+# json.dump the dictionary into url_ranking.json
 def createGraph(Documents):
     directory = os.path.dirname(os.getcwd()) + "/index/"
     G = nx.DiGraph()
@@ -36,8 +36,8 @@ def createGraph(Documents):
         json.dump(pr, url_file)
     print("ranking finished")
 
-#goes through docs and finds all anchor text and puts it into a list 
-#where each list is a value and the corresponding url is a key in a dictionary
+# goes through docs and finds all anchor text and puts it into a list 
+# where each list is a value and the corresponding url is a key in a dictionary
 def anchorExtractor(Documents):
     directory = os.path.dirname(os.getcwd()) + "/index/"
     url_links = get_url_index()
@@ -65,9 +65,9 @@ def anchorExtractor(Documents):
     file_name = os.path.join(directory, "anchors.json")
     with open(file_name, 'w') as url_file:
         json.dump(anchor_dict, url_file)
-    print("anchors found") 
+    print("generated anchors.json") 
 
-#removes duplicate anchor words in the dictionary in anchors.json
+# removes duplicate anchor words in the dictionary in anchors.json
 def update_anchor():
     alpha_path = os.path.dirname(os.getcwd()) + "/index/anchors.json"
     updated_anchor = dict()
@@ -88,7 +88,7 @@ def update_anchor():
         json.dump(updated_anchor, url_file)
     print("updated anchors")
 
-#uses krovetz stemmer to stem anchor words in dicitonary in anchors.json
+# uses krovetz stemmer to stem anchor words in dicitonary in anchors.json
 def update_update_anchor():
     alpha_path = os.path.dirname(os.getcwd()) + "/index/updated_anchor.json"
     ks = krovetz.PyKrovetzStemmer()
@@ -107,7 +107,7 @@ def update_update_anchor():
     file_name = os.path.join(directory, "optimal_anchor.json")
     with open(file_name, 'w') as url_file:
         json.dump(updated_anchor, url_file)
-    print("updated anchors")
+    print("updated anchors again")
 
 if __name__ == "__main__":
     file_location = "DEV"

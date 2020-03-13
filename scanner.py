@@ -96,13 +96,11 @@ def build_url_index(Documents):
 # returns boolean for if the document is a near duplicate
 def is_not_duplicate(text, simhashes):
 	current_sim = Simhash(text)
-
 	if len(simhashes) == 0:
 		simhashes.add(current_sim)
 		return True
-	
 	for x in simhashes:
-		if current_sim.distance(x) <= 2:
+		if current_sim.distance(x) <= 1:
 			print("duplicate detected")
 			return False
 	simhashes.add(current_sim)
@@ -112,6 +110,5 @@ def is_not_duplicate(text, simhashes):
 if __name__ == '__main__':
 	file_location = "DEV"
 	build_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
-	#build_url_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
-	#print(len(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location))))
-
+	build_url_index(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+	print("Number of documents", len(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location))))
