@@ -1,4 +1,9 @@
 # search-engine
+
+Ryan Hahn 2443671
+Justine Woo 60622683
+Victor Meng 52057282
+
 **ABOUT**
 
 This is a search engine program, implemented in Python. It indexes the tokens in a local collection of documents and generates files necessary for query result retrieval. It performs retreival through a local web app.
