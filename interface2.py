@@ -13,7 +13,7 @@ app.config['SECRET_KEY'] = 'aab774a98e91dbc255f8ac641798d3de'
 
 # class used to store retrieval state for search engine operation
 class Searcher:
-	def __init__(self, q, ):
+	def __init__(self, q):
 		self.old_query = q
 		self.heap = []
 		self.results = []
@@ -21,8 +21,8 @@ class Searcher:
 		self.seen = dict() # key = docID, value = number of times seen
 		self.used = set() # ids
 		self.front = 0 # where to start adding postings
-		self.end = 299 # where to end adding postings
-		self.threshold = 300 # number of postings to add
+		self.end = 499 # where to end adding postings
+		self.threshold = 500 # number of postings to add
 		self.page_count = 1 # which batch is going to be displayed
 		heapq.heapify(self.heap)
 
@@ -94,12 +94,12 @@ def home():
 	if search.validate_on_submit():
 		start, end = 0, 0
 		query, restrict = query_processing(query_processor(search.query.data), threshold_index)
-		print(query)
 		# DISPLAY MORE
 		if search.query.data == searcher.old_query:
 			start = time.time()
 			searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
 			end = time.time()
+			cache[search.query.data] += list(searcher.heap)
 			searcher.page_count += 1
 			results = searcher.top(urlindex)
 		# NEW QUERY
@@ -107,12 +107,21 @@ def home():
 			searcher = Searcher(search.query.data)
 			if restrict > 3:
 				searcher.change_threshold(100)
-				print(searcher.threshold)
-			start = time.time()
-			searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
+			if search.query.data in cache:
+				start = time.time()
+				searcher.heap = sorted(cache[search.query.data])
+				print(len(searcher.heap))
+				print(searcher.heap[0:10])
+			else:
+				start = time.time()
+				searcher.add_more(query, main_path, indexindex, urlrank, urlindex, anchor)
+				cache[search.query.data] = list(searcher.heap)
+				print(len(cache[search.query.data]))
+				print(cache[search.query.data][0:10])
 			end = time.time()
 			results = searcher.top(urlindex)
 
+		print(cache.keys())
 		time_passed = end - start
 		time_passed = float(str(time_passed)[0:6])
 
