@@ -109,27 +109,9 @@ def update_update_anchor():
         json.dump(updated_anchor, url_file)
     print("updated anchors")
 
-# def update_pagerank(path):
-# 	print("updating pagerank scores")
-# 	new_path = os.path.dirname(os.getcwd()) + "/index/main.txt"
-# 	scored = open(new_path, 'w')
-# 	index = open(path, "r")
-# 	for line in index:
-# 		word, list_str = line.split(" ", 1)
-# 		#print(word)
-# 		list_real = json.loads(list_str)
-# 		for post in list_real:
-# 			post["score"] = score(post, 55393, len(list_real))
-# 		list_real = sorted(list_real, key = lambda x: -x["score"])
-# 		s = word + " " + json.dumps(list_real) + "\n"
-# 		scored.write(s)
-# 	index.close()
-# 	scored.close()
-# 	print("generated ranked")
-
 if __name__ == "__main__":
     file_location = "DEV"
-    # update_anchor()
+    createGraph(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+    anchorExtractor(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
+    update_anchor()
     update_update_anchor()
-    # anchorExtractor(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))
-    #createGraph(get_files(os.path.join(os.path.dirname(os.getcwd()), file_location)))

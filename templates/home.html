@@ -18,8 +18,10 @@
         </form>
     </div>
     <div>
-        Retrieval Time: {{time_passed}} seconds
+        Type in a query into the search bar and press the Enter button. 
+        To show more results, press the enter button again.
     </div>
+    <div> Retrieval Time: {{time_passed}} seconds </div>
     {% for url in results %}
     <div>
         <a href={{url}} target="_blank">{{url}}</a>
